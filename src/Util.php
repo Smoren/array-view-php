@@ -14,4 +14,12 @@ class Util
         }
         return $index < 0 ? $containerLength + $index : $index;
     }
+
+    public static function isArraySequential(array $source): bool
+    {
+        if (!function_exists('array_is_list')) {
+            return array_keys($source) === range(0, count($source) - 1);
+        }
+        return array_is_list($source);
+    }
 }

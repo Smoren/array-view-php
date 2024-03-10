@@ -9,6 +9,7 @@ use Smoren\ArrayView\Exceptions\KeyError;
 use Smoren\ArrayView\Exceptions\LengthError;
 use Smoren\ArrayView\Exceptions\NotSupportedError;
 use Smoren\ArrayView\Exceptions\ReadonlyError;
+use Smoren\ArrayView\Exceptions\ValueError;
 use Smoren\ArrayView\Interfaces\ArraySelectorInterface;
 use Smoren\ArrayView\Interfaces\ArrayViewInterface;
 use Smoren\ArrayView\Selectors\MaskSelector;
@@ -57,6 +58,10 @@ class ArrayView implements ArrayViewInterface
      */
     public function __construct(&$source, ?bool $readonly = null)
     {
+        if (is_array($source) && !Util::isArraySequential($source)) {
+            throw new ValueError('Cannot create view for non-sequential array.');
+        }
+
         $this->source = &$source;
         $this->readonly = $readonly ?? (($source instanceof ArrayViewInterface) ? $source->isReadonly() : false);
         $this->parentView = ($source instanceof ArrayViewInterface) ? $source : null;
