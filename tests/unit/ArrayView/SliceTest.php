@@ -268,13 +268,13 @@ class SliceTest extends \Codeception\Test\Unit
     }
 
     /**
-     * @dataProvider dataProviderForSliceHighColon
+     * @dataProvider dataProviderForSliceColonHigh
      * @param array $array
      * @param int $high
      * @param array $expected
      * @return void
      */
-    public function testSliceHighColon(array $array, int $high, array $expected): void
+    public function testSliceColonHigh(array $array, int $high, array $expected): void
     {
         // Given
         $arrayView = ArrayView::toView($array);
@@ -286,7 +286,7 @@ class SliceTest extends \Codeception\Test\Unit
         $this->assertSame($expected, $slice);
     }
 
-    public static function dataProviderForSliceHighColon(): array
+    public static function dataProviderForSliceColonHigh(): array
     {
         return [
             [
@@ -373,13 +373,13 @@ class SliceTest extends \Codeception\Test\Unit
     }
 
     /**
-     * @dataProvider dataProviderForSliceNegativeHighColon
+     * @dataProvider dataProviderForSliceColonNegativeHigh
      * @param array $array
      * @param int $negativeHigh
      * @param array $expected
      * @return void
      */
-    public function testSliceNegativeHighColon(array $array, int $negativeHigh, array $expected): void
+    public function testSliceColonNegativeHigh(array $array, int $negativeHigh, array $expected): void
     {
         // Given
         $arrayView = ArrayView::toView($array);
@@ -391,7 +391,7 @@ class SliceTest extends \Codeception\Test\Unit
         $this->assertSame($expected, $slice);
     }
 
-    public static function dataProviderForSliceNegativeHighColon(): array
+    public static function dataProviderForSliceColonNegativeHigh(): array
     {
         return [
             [
@@ -1097,17 +1097,17 @@ class SliceTest extends \Codeception\Test\Unit
     /**
      * @dataProvider dataProviderForSliceDoubleColonNegativeStep
      * @param array $array
-     * @param int $step
+     * @param int $negativeStep
      * @param array $expected
      * @return void
      */
-    public function testSliceDoubleColonNegativeStep(array $array, int $step, array $expected): void
+    public function testSliceDoubleColonNegativeStep(array $array, int $negativeStep, array $expected): void
     {
         // Given
         $arrayView = ArrayView::toView($array);
 
         // When
-        $slice = $arrayView["::$step"];
+        $slice = $arrayView["::$negativeStep"];
 
         // Then
         $this->assertSame($expected, $slice);
@@ -1170,14 +1170,14 @@ class SliceTest extends \Codeception\Test\Unit
     }
 
     /**
-     * @dataProvider dataProviderForSliceLowColonStep
+     * @dataProvider dataProviderForSliceLowDoubleColonStep
      * @param array $array
      * @param int $low
      * @param int $step
      * @param array $expected
      * @return void
      */
-    public function testSliceLowColonStep(array $array, int $low, int $step, array $expected): void
+    public function testSliceLowDoubleColonStep(array $array, int $low, int $step, array $expected): void
     {
         // Given
         $arrayView = ArrayView::toView($array);
@@ -1189,7 +1189,7 @@ class SliceTest extends \Codeception\Test\Unit
         $this->assertSame($expected, $slice);
     }
 
-    public static function dataProviderForSliceLowColonStep(): array
+    public static function dataProviderForSliceLowDoubleColonStep(): array
     {
         return [
             [
@@ -1263,7 +1263,7 @@ class SliceTest extends \Codeception\Test\Unit
      * @param array $expected
      * @return void
      */
-    public function testSliceColonHighStepStep(array $array, int $high, int $step, array $expected): void
+    public function testSliceColonHighStep(array $array, int $high, int $step, array $expected): void
     {
         // Given
         $arrayView = ArrayView::toView($array);
