@@ -28,7 +28,8 @@ class Slice
 
     /**
      * @param string|Slice $s
-     * @return void
+     *
+     * @return Slice
      */
     public static function toSlice($s): Slice
     {
@@ -36,17 +37,18 @@ class Slice
             return $s;
         }
 
-        if (!static::isSliceString($s)) {
+        if (!self::isSliceString($s)) {
             throw new ValueError("Invalid slice: \"{$s}\".");
         }
 
-        $slice = static::parseSliceString($s);
+        $slice = self::parseSliceString($s);
 
         return new Slice(...$slice);
     }
 
     /**
      * @param mixed $s
+     *
      * @return bool
      */
     public static function isSlice($s): bool
@@ -56,6 +58,7 @@ class Slice
 
     /**
      * @param mixed $s
+     *
      * @return bool
      */
     public static function isSliceString($s): bool
@@ -72,7 +75,7 @@ class Slice
             return false;
         }
 
-        $slice = static::parseSliceString($s);
+        $slice = self::parseSliceString($s);
 
         return !(\count($slice) < 1 || \count($slice) > 3);
     }
@@ -89,6 +92,11 @@ class Slice
         $this->step = $step;
     }
 
+    /**
+     * @param int $containerLength
+     *
+     * @return NormalizedSlice
+     */
     public function normalize(int $containerLength): NormalizedSlice
     {
         // TODO: Need refactor
@@ -103,9 +111,9 @@ class Slice
         $start = $this->start ?? ($step > 0 ? 0 : $containerLength - 1);
         $end = $this->end ?? ($step > 0 ? $containerLength : -1);
 
-        $start = round($start);
-        $end = round($end);
-        $step = round($step);
+        $start = intval(round($start));
+        $end = intval(round($end));
+        $step = intval(round($step));
 
         $start = Util::normalizeIndex($start, $containerLength, false);
         $end = Util::normalizeIndex($end, $containerLength, false);
@@ -138,7 +146,7 @@ class Slice
 
     /**
      * @param string $s
-     * @return array<int>
+     * @return array<int|null>
      */
     private static function parseSliceString(string $s): array
     {

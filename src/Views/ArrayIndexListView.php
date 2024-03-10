@@ -21,6 +21,7 @@ class ArrayIndexListView extends ArrayView
      * @param array<T>|ArrayViewInterface<T> $source
      * @param array<int> $indexes
      * @param bool|null $readonly
+     *
      * @throws ReadonlyError
      */
     public function __construct(&$source, array $indexes, ?bool $readonly = null)
@@ -29,16 +30,26 @@ class ArrayIndexListView extends ArrayView
         $this->indexes = $indexes;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function toArray(): array
     {
+        /** @var Array<T> */
         return array_map(fn(int $index) => $this[$index], array_keys($this->indexes));
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function count(): int
     {
         return \count($this->indexes);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     protected function convertIndex(int $i): int
     {
         return Util::normalizeIndex(

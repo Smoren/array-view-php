@@ -22,6 +22,13 @@ class MaskSelector implements ArraySelectorInterface
     }
 
     /**
+     * @template T
+     *
+     * @param ArrayViewInterface<T> $source
+     * @param bool|null $readonly
+     *
+     * @return ArrayMaskView<T>
+     *
      * {@inheritDoc}
      */
     public function select(ArrayViewInterface $source, ?bool $readonly = null): ArrayMaskView

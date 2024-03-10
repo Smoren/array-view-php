@@ -6,10 +6,6 @@ use Smoren\ArrayView\Interfaces\ArraySelectorInterface;
 use Smoren\ArrayView\Interfaces\ArrayViewInterface;
 use Smoren\ArrayView\Views\ArrayIndexListView;
 
-/**
- * @template T
- * @implements ArraySelectorInterface<T>
- */
 final class IndexListSelector implements ArraySelectorInterface
 {
     /**
@@ -26,6 +22,13 @@ final class IndexListSelector implements ArraySelectorInterface
     }
 
     /**
+     * @template T
+     *
+     * @param ArrayViewInterface<T> $source
+     * @param bool|null $readonly
+     *
+     * @return ArrayIndexListView<T>
+     *
      * {@inheritDoc}
      */
     public function select(ArrayViewInterface $source, ?bool $readonly = null): ArrayIndexListView

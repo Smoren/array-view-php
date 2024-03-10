@@ -19,11 +19,13 @@ use Smoren\ArrayView\Util;
 
 /**
  * @template T
+ *
+ * @implements ArrayViewInterface<T>
  */
 class ArrayView implements ArrayViewInterface
 {
     /**
-     * @var array<T>|ArrayView<T>
+     * @var array<T>|ArrayViewInterface<T>
      */
     protected $source;
     /**
@@ -31,14 +33,14 @@ class ArrayView implements ArrayViewInterface
      */
     protected bool $readonly;
     /**
-     * @var ArrayView<T>|null
+     * @var ArrayViewInterface<T>|null
      */
-    protected ?ArrayView $parentView;
+    protected ?ArrayViewInterface $parentView;
 
     /**
      * {@inheritDoc}
      */
-    public static function toView(&$source, ?bool $readonly = null): ArrayView
+    public static function toView(&$source, ?bool $readonly = null): ArrayViewInterface
     {
         if (!($source instanceof ArrayViewInterface)) {
             return new ArrayView($source, $readonly);
@@ -106,17 +108,28 @@ class ArrayView implements ArrayViewInterface
     }
 
     /**
+     * @return ArrayView<T>
+     *
      * {@inheritDoc}
      */
     public function apply(callable $mapper): self
     {
         for ($i = 0; $i < \count($this); $i++) {
-            $this[$i] = $mapper($this[$i], $i);
+            /** @var T $item */
+            $item = $this[$i];
+            $this[$i] = $mapper($item, $i);
         }
         return $this;
     }
 
     /**
+     * @template U
+     *
+     * @param array<U>|ArrayViewInterface<U> $data
+     * @param callable(T, U, int): T $mapper
+     *
+     * @return ArrayView<T>
+     *
      * {@inheritDoc}
      */
     public function applyWith($data, callable $mapper): ArrayViewInterface
@@ -129,7 +142,11 @@ class ArrayView implements ArrayViewInterface
         $dataView = ArrayView::toView($data);
 
         for ($i = 0; $i < \count($this); $i++) {
-            $this[$i] = $mapper($this[$i], $dataView[$i], $i);
+            /** @var T $lhs */
+            $lhs = $this[$i];
+            /** @var U $rhs */
+            $rhs = $dataView[$i];
+            $this[$i] = $mapper($lhs, $rhs, $i);
         }
 
         return $this;
@@ -137,9 +154,18 @@ class ArrayView implements ArrayViewInterface
 
     /**
      * {@inheritDoc}
+     *
+     * @return ArrayViewInterface<T>
      */
     public function set($newValues): ArrayViewInterface
     {
+        if (!\is_array($newValues) && !($newValues instanceof ArrayViewInterface)) {
+            for ($i = 0; $i < \count($this); $i++) {
+                $this[$i] = $newValues;
+            }
+            return $this;
+        }
+
         [$dataSize, $thisSize] = [\count($newValues), \count($this)];
         if ($dataSize !== $thisSize) {
             throw new LengthError("Length of values array not equal to view length ({$dataSize} != {$thisSize}).");
@@ -148,6 +174,7 @@ class ArrayView implements ArrayViewInterface
         $newValuesView = ArrayView::toView($newValues);
 
         for ($i = 0; $i < \count($this); $i++) {
+            // @phpstan-ignore-next-line
             $this[$i] = $newValuesView[$i];
         }
 
@@ -155,12 +182,14 @@ class ArrayView implements ArrayViewInterface
     }
 
     /**
-     * @return \Generator<T>
+     * @return \Generator<int, T>
      */
     public function getIterator(): \Generator
     {
         for ($i = 0; $i < \count($this); $i++) {
-            yield $this[$i];
+            /** @var T $item */
+            $item = $this[$i];
+            yield $item;
         }
     }
 
@@ -197,13 +226,14 @@ class ArrayView implements ArrayViewInterface
      * @param numeric|string|ArraySelectorInterface $offset
      * @return T|array<T>
      */
+    #[\ReturnTypeWillChange]
     public function offsetGet($offset)
     {
         if (\is_numeric($offset)) {
             if (!$this->numericOffsetExists($offset)) {
                 throw new IndexError("Index {$offset} is out of range.");
             }
-            return $this->source[$this->convertIndex($offset)];
+            return $this->source[$this->convertIndex(\intval($offset))];
         }
 
         if (\is_string($offset) && Slice::isSlice($offset)) {
@@ -219,7 +249,7 @@ class ArrayView implements ArrayViewInterface
 
     /**
      * @param numeric|string|ArraySelectorInterface $offset
-     * @param T|array<T>|ArrayView<T> $value
+     * @param T|array<T>|ArrayViewInterface<T> $value
      * @return void
      */
     public function offsetSet($offset, $value): void
@@ -229,11 +259,13 @@ class ArrayView implements ArrayViewInterface
         }
 
         if (\is_numeric($offset) && $this->numericOffsetExists($offset)) {
-            $this->source[$this->convertIndex($offset)] = $value;
+            // @phpstan-ignore-next-line
+            $this->source[$this->convertIndex(\intval($offset))] = $value;
             return;
         }
 
         if (\is_string($offset) && Slice::isSlice($offset)) {
+            /** @var array<T>|ArrayViewInterface<T> $value */
             $this->subview(new SliceSelector($offset))->set($value);
             return;
         }
@@ -287,7 +319,7 @@ class ArrayView implements ArrayViewInterface
     private function numericOffsetExists($offset): bool
     {
         try {
-            $index = $this->convertIndex($offset);
+            $index = $this->convertIndex(intval($offset));
         } catch (IndexError $e) {
             return false;
         }

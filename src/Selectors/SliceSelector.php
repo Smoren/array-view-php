@@ -18,6 +18,16 @@ class SliceSelector extends Slice implements ArraySelectorInterface
         parent::__construct($s->start, $s->end, $s->step);
     }
 
+    /**
+     * @template T
+     *
+     * @param ArrayViewInterface<T> $source
+     * @param bool|null $readonly
+     *
+     * @return ArraySliceView<T>
+     *
+     * {@inheritDoc}
+     */
     public function select(ArrayViewInterface $source, ?bool $readonly = null): ArrayViewInterface
     {
         return new ArraySliceView($source, $this, $readonly ?? $source->isReadonly());

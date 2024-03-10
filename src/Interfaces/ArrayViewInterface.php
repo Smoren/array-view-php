@@ -8,16 +8,17 @@ use Smoren\ArrayView\Views\ArrayView;
 
 /**
  * @template T
- * @extends \ArrayAccess<int, T>
+ * @extends \ArrayAccess<int, T|array<T>>
+ * @extends \IteratorAggregate<int, T>
  */
-interface ArrayViewInterface extends \ArrayAccess, \Countable, \IteratorAggregate
+interface ArrayViewInterface extends \ArrayAccess, \IteratorAggregate, \Countable
 {
     /**
-     * @param array<T>|ArrayView<T> $source
+     * @param array<T>|ArrayViewInterface<T> $source
      * @param bool|null $readonly
-     * @return ArrayView<T>
+     * @return ArrayViewInterface<T>
      */
-    public static function toView(&$source, ?bool $readonly = null): ArrayView;
+    public static function toView(&$source, ?bool $readonly = null): ArrayViewInterface;
 
     /**
      * @return array<T>
@@ -26,7 +27,7 @@ interface ArrayViewInterface extends \ArrayAccess, \Countable, \IteratorAggregat
 
     /**
      * @param callable(T): bool $predicate
-     * @return ArrayViewInterface
+     * @return ArrayViewInterface<T>
      */
     public function filter(callable $predicate): ArrayViewInterface;
 
@@ -45,20 +46,24 @@ interface ArrayViewInterface extends \ArrayAccess, \Countable, \IteratorAggregat
 
     /**
      * @param callable(T, int): T $mapper
+     *
      * @return ArrayViewInterface<T>
      */
     public function apply(callable $mapper): self;
 
     /**
      * @template U
+     *
      * @param array<U>|ArrayViewInterface<U> $data
      * @param callable(T, U, int): T $mapper
+     *
      * @return ArrayViewInterface<T>
      */
     public function applyWith($data, callable $mapper): self;
 
     /**
-     * @param array<T>|ArrayView<T> $newValues
+     * @param array<T>|ArrayViewInterface<T>|T $newValues
+     *
      * @return ArrayViewInterface<T>
      */
     public function set($newValues): self;

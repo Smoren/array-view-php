@@ -2,6 +2,7 @@
 
 namespace Smoren\ArrayView\Views;
 
+use Smoren\ArrayView\Interfaces\ArrayViewInterface;
 use Smoren\ArrayView\Structs\NormalizedSlice;
 use Smoren\ArrayView\Structs\Slice;
 
@@ -12,12 +13,14 @@ use Smoren\ArrayView\Structs\Slice;
 class ArraySliceView extends ArrayView
 {
     /**
-     * @var NormalizedSlice|Slice
+     * @var NormalizedSlice
      */
     protected NormalizedSlice $slice;
 
     /**
-     * @param NormalizedSlice $slice
+     * @param Array<T>|ArrayViewInterface<T> $source
+     * @param Slice $slice
+     * @param bool|null $readonly
      */
     public function __construct(&$source, Slice $slice, ?bool $readonly = null)
     {
