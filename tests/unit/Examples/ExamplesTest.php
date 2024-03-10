@@ -44,6 +44,10 @@ class ExamplesTest extends \Codeception\Test\Unit
             [5, 4, 3, 2, 1],
             $originalView->subview(new SliceSelector('::-1'))->toArray(),
         );
+        $this->assertSame(
+            [5, 4, 3, 2, 1],
+            $originalView->subview('::-1')->toArray(),
+        );
 
         $originalView->subview(new MaskSelector([true, false, true, false, true]))
             ->apply(fn(int $x) => $x * 10);
