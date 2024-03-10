@@ -2,14 +2,10 @@
 
 namespace Smoren\ArrayView\Tests\Unit\ArrayView;
 
-use Smoren\ArrayView\Exceptions\ValueError;
 use Smoren\ArrayView\Selectors\IndexListSelector;
 use Smoren\ArrayView\Selectors\MaskSelector;
 use Smoren\ArrayView\Selectors\SliceSelector;
 use Smoren\ArrayView\Structs\Slice;
-use Smoren\ArrayView\Views\ArrayIndexListView;
-use Smoren\ArrayView\Views\ArrayMaskView;
-use Smoren\ArrayView\Views\ArraySliceView;
 use Smoren\ArrayView\Views\ArrayView;
 
 class WriteTest extends \Codeception\Test\Unit
@@ -129,6 +125,21 @@ class WriteTest extends \Codeception\Test\Unit
 
         $view[':'] = $toWrite;
 
+        $this->assertSame($expected, $source);
+    }
+
+    /**
+     * @dataProvider dataProviderForApply
+     */
+    public function testApply(array $source, callable $viewGetter, callable $mapper, array $expected)
+    {
+        // Given
+        $view = $viewGetter($source);
+
+        // When
+        $view->apply($mapper);
+
+        // Then
         $this->assertSame($expected, $source);
     }
 
@@ -254,6 +265,64 @@ class WriteTest extends \Codeception\Test\Unit
                     ->subview('::2'),
                 111,
                 [111, 2, 3, 4, 5, 6, 7, 8, 111, 10],
+            ],
+        ];
+    }
+
+    public function dataProviderForApply(): array
+    {
+        return [
+            [
+                [],
+                fn (array &$source) => ArrayView::toView($source),
+                fn (int $item) => $item + 1,
+                [],
+            ],
+            [
+                [1],
+                fn (array &$source) => ArrayView::toView($source),
+                fn (int $item) => $item + 1,
+                [2],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+                fn (array &$source) => ArrayView::toView($source),
+                fn (int $item) => $item,
+                [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+                fn (array &$source) => ArrayView::toView($source),
+                fn (int $item) => $item + 1,
+                [2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+                fn (array &$source) => ArrayView::toView($source),
+                fn (int $item, int $index) => $item + $index,
+                [1, 3, 5, 7, 9, 11, 13, 15, 17, 19],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+                fn (array &$source) => ArrayView::toView($source)
+                    ->subview('::2'),
+                fn (int $item, int $index) => $item + $index,
+                [1, 2, 4, 4, 7, 6, 10, 8, 13, 10],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+                fn (array &$source) => ArrayView::toView($source)
+                    ->subview('1::2'),
+                fn (int $item) => $item * 2,
+                [1, 4, 3, 8, 5, 12, 7, 16, 9, 20],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+                fn (array &$source) => ArrayView::toView($source)
+                    ->subview('1::2')
+                    ->subview(new IndexListSelector([0, 1, 2])),
+                fn (int $item) => $item * 2,
+                [1, 4, 3, 8, 5, 12, 7, 8, 9, 10],
             ],
         ];
     }
