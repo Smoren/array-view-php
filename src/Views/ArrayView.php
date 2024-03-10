@@ -77,7 +77,7 @@ class ArrayView implements ArrayViewInterface
     /**
      * {@inheritDoc}
      */
-    public function filter(callable $predicate): ArrayMaskView
+    public function filter(callable $predicate): ArrayViewInterface
     {
         return $this->is($predicate)->select($this);
     }
@@ -85,7 +85,7 @@ class ArrayView implements ArrayViewInterface
     /**
      * {@inheritDoc}
      */
-    public function is(callable $predicate): MaskSelector
+    public function is(callable $predicate): ArraySelectorInterface
     {
         return new MaskSelector(array_map($predicate, $this->toArray()));
     }
