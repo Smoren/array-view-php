@@ -1,4 +1,4 @@
-# Schematic data mapper
+# Array View PHP
 ![Packagist PHP Version Support](https://img.shields.io/packagist/php-v/smoren/array-view)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/Smoren/array-view-php/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/Smoren/array-view-php/?branch=master)
 [![Coverage Status](https://coveralls.io/repos/github/Smoren/array-view-php/badge.svg?branch=master)](https://coveralls.io/github/Smoren/array-view-php?branch=master)
@@ -118,4 +118,4 @@ ArrayView conforms to the following standards:
 * PSR-12 — [Extended coding style guide](https://www.php-fig.org/psr/psr-12/)
 
 ## License
-ArrayView is licensed under the MIT License.
+ArrayView PHP is licensed under the MIT License.
