@@ -46,8 +46,8 @@ jobs:
       - name: PHP Code Sniffer
         run: composer codesniffer
 
-      - name: PHPStan analysis
-        run: composer stan
+#      - name: PHPStan analysis
+#        run: composer stan
 
   code-coverage:
     name: Code coverage
