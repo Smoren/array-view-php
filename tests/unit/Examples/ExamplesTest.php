@@ -68,6 +68,10 @@ class ExamplesTest extends \Codeception\Test\Unit
             [5, 4, 3, 2, 1],
             $originalView[new SliceSelector('::-1')],
         );
+        $this->assertSame(
+            [5, 4, 3, 2, 1],
+            $originalView['::-1'],
+        );
 
         $originalView[new MaskSelector([true, false, true, false, true])] = [10, 30, 50];
 

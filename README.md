@@ -74,6 +74,7 @@ $originalView = ArrayView::toView($originalArray);
 $originalView[new MaskSelector([true, false, true, false, true])]; // [1, 3, 5]
 $originalView[new IndexListSelector([1, 2, 4])]; // [2, 3, 5]
 $originalView[new SliceSelector('::-1')]; // [5, 4, 3, 2, 1]
+$originalView['::-1']; // [5, 4, 3, 2, 1]
 
 $originalView[new MaskSelector([true, false, true, false, true])] = [10, 30, 50];
 print_r(originalArray); // [10, 2, 30, 4, 50]
