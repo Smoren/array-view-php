@@ -132,7 +132,7 @@ class ArrayView implements ArrayViewInterface
      *
      * {@inheritDoc}
      */
-    public function applyWith($data, callable $mapper): ArrayViewInterface
+    public function applyWith($data, callable $mapper): self
     {
         [$dataSize, $thisSize] = [\count($data), \count($this)];
         if ($dataSize !== $thisSize) {
@@ -155,9 +155,9 @@ class ArrayView implements ArrayViewInterface
     /**
      * {@inheritDoc}
      *
-     * @return ArrayViewInterface<T>
+     * @return ArrayView<T>
      */
-    public function set($newValues): ArrayViewInterface
+    public function set($newValues): self
     {
         if (!\is_array($newValues) && !($newValues instanceof ArrayViewInterface)) {
             for ($i = 0; $i < \count($this); $i++) {
