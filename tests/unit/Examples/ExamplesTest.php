@@ -13,6 +13,7 @@ class ExamplesTest extends \Codeception\Test\Unit
 {
     public function testSlicing()
     {
+        new SliceSelector('::');
         $originalArray = [1, 2, 3, 4, 5, 6, 7, 8, 9];
         $originalView = ArrayView::toView($originalArray);
 
@@ -89,5 +90,10 @@ class ExamplesTest extends \Codeception\Test\Unit
 
         $subview[':'] = [55, 77];
         $this->assertSame([1, 2, 3, 4, 55, 6, 77, 8, 9, 10], $originalArray);
+    }
+
+    protected function _setUp()
+    {
+        $_ = new MaskSelector([]); // TODO why for 7.4???
     }
 }
