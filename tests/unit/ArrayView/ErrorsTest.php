@@ -5,7 +5,7 @@ namespace Smoren\ArrayView\Tests\Unit\ArrayView;
 use Smoren\ArrayView\Exceptions\ValueError;
 use Smoren\ArrayView\Views\ArrayView;
 
-class NonSequentialErrorTest extends \Codeception\Test\Unit
+class ErrorsTest extends \Codeception\Test\Unit
 {
     /**
      * @dataProvider dataProviderForNonSequentialError
