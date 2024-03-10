@@ -59,7 +59,7 @@ $originalView.subview(new SliceSelector('::-1')).toArray(); // [5, 4, 3, 2, 1]
 $originalView.subview('::-1').toArray(); // [5, 4, 3, 2, 1]
 
 $originalView.subview(new MaskSelector([true, false, true, false, true])).apply(fn ($x) => x * 10);
-print_r(originalArray); // [10, 2, 30, 4, 50]
+print_r($originalArray); // [10, 2, 30, 4, 50]
 ```
 
 ### Subarrays
@@ -78,7 +78,7 @@ $originalView[new SliceSelector('::-1')]; // [5, 4, 3, 2, 1]
 $originalView['::-1']; // [5, 4, 3, 2, 1]
 
 $originalView[new MaskSelector([true, false, true, false, true])] = [10, 30, 50];
-print_r(originalArray); // [10, 2, 30, 4, 50]
+print_r($originalArray); // [10, 2, 30, 4, 50]
 ```
 
 ### Combining subviews
