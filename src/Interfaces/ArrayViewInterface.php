@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Smoren\ArrayView\Interfaces;
 
-use Smoren\ArrayView\Views\ArrayView;
-
 /**
  * @template T
  * @extends \ArrayAccess<int, T|array<T>>
