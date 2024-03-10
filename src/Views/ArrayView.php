@@ -54,6 +54,14 @@ class ArrayView implements ArrayViewInterface
     }
 
     /**
+     * {@inheritDoc}
+     */
+    public static function toUnlinkedView($source, ?bool $readonly = null): ArrayViewInterface
+    {
+        return static::toView($source, $readonly);
+    }
+
+    /**
      * @param array<T>|ArrayViewInterface<T> $source
      * @param bool|null $readonly
      * @throws ReadonlyError

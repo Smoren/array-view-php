@@ -19,6 +19,13 @@ interface ArrayViewInterface extends \ArrayAccess, \IteratorAggregate, \Countabl
     public static function toView(&$source, ?bool $readonly = null): ArrayViewInterface;
 
     /**
+     * @param array<T>|ArrayViewInterface<T> $source
+     * @param bool|null $readonly
+     * @return ArrayViewInterface<T>
+     */
+    public static function toUnlinkedView($source, ?bool $readonly = null): ArrayViewInterface;
+
+    /**
      * @return array<T>
      */
     public function toArray(): array;

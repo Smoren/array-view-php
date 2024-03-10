@@ -14,11 +14,11 @@ final class IndexListSelector implements ArraySelectorInterface
     private array $value;
 
     /**
-     * @param array<int> $value
+     * @param array<int>|ArrayViewInterface<int> $value
      */
-    public function __construct(array $value)
+    public function __construct($value)
     {
-        $this->value = $value;
+        $this->value = \is_array($value) ? $value : $value->toArray();
     }
 
     /**
