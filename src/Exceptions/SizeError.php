@@ -2,6 +2,6 @@
 
 namespace Smoren\ArrayView\Exceptions;
 
-class LengthError extends \RuntimeException
+class SizeError extends \RuntimeException
 {
 }

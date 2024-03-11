@@ -2,7 +2,7 @@
 
 namespace Smoren\ArrayView\Views;
 
-use Smoren\ArrayView\Exceptions\LengthError;
+use Smoren\ArrayView\Exceptions\SizeError;
 use Smoren\ArrayView\Interfaces\ArrayViewInterface;
 
 /**
@@ -25,7 +25,7 @@ class ArrayMaskView extends ArrayIndexListView
     {
         [$sourceSize, $maskSize] = [\count($source), \count($mask)];
         if ($sourceSize !== $maskSize) {
-            throw new LengthError("Mask length not equal to source length ({$maskSize} != {$maskSize}).");
+            throw new SizeError("Mask size not equal to source length ({$maskSize} != {$sourceSize}).");
         }
 
         $indexes = array_filter(

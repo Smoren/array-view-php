@@ -6,7 +6,7 @@ namespace Smoren\ArrayView\Views;
 
 use Smoren\ArrayView\Exceptions\IndexError;
 use Smoren\ArrayView\Exceptions\KeyError;
-use Smoren\ArrayView\Exceptions\LengthError;
+use Smoren\ArrayView\Exceptions\SizeError;
 use Smoren\ArrayView\Exceptions\NotSupportedError;
 use Smoren\ArrayView\Exceptions\ReadonlyError;
 use Smoren\ArrayView\Exceptions\ValueError;
@@ -146,7 +146,7 @@ class ArrayView implements ArrayViewInterface
     {
         [$dataSize, $thisSize] = [\count($data), \count($this)];
         if ($dataSize !== $thisSize) {
-            throw new LengthError("Length of values array not equal to view length ({$dataSize} != {$thisSize}).");
+            throw new SizeError("Length of values array not equal to view length ({$dataSize} != {$thisSize}).");
         }
 
         $dataView = ArrayView::toView($data);
@@ -178,13 +178,12 @@ class ArrayView implements ArrayViewInterface
 
         [$dataSize, $thisSize] = [\count($newValues), \count($this)];
         if ($dataSize !== $thisSize) {
-            throw new LengthError("Length of values array not equal to view length ({$dataSize} != {$thisSize}).");
+            throw new SizeError("Length of values array not equal to view length ({$dataSize} != {$thisSize}).");
         }
 
         $newValuesView = ArrayView::toView($newValues);
 
         for ($i = 0; $i < \count($this); $i++) {
-            // @phpstan-ignore-next-line
             $this[$i] = $newValuesView[$i];
         }
 
@@ -192,7 +191,7 @@ class ArrayView implements ArrayViewInterface
     }
 
     /**
-     * @return \Generator<int, T>
+     * {@inheritDoc}
      */
     public function getIterator(): \Generator
     {
@@ -204,7 +203,7 @@ class ArrayView implements ArrayViewInterface
     }
 
     /**
-     * @return bool
+     * {@inheritDoc}
      */
     public function isReadonly(): bool
     {
@@ -212,8 +211,7 @@ class ArrayView implements ArrayViewInterface
     }
 
     /**
-     * @param numeric|string|ArraySelectorInterface $offset
-     * @return bool
+     * {@inheritDoc}
      */
     public function offsetExists($offset): bool
     {
@@ -233,8 +231,7 @@ class ArrayView implements ArrayViewInterface
     }
 
     /**
-     * @param numeric|string|ArraySelectorInterface $offset
-     * @return T|array<T>
+     * {@inheritDoc}
      */
     #[\ReturnTypeWillChange]
     public function offsetGet($offset)
@@ -260,9 +257,7 @@ class ArrayView implements ArrayViewInterface
     }
 
     /**
-     * @param numeric|string|ArraySelectorInterface $offset
-     * @param T|array<T>|ArrayViewInterface<T> $value
-     * @return void
+     * {@inheritDoc}
      */
     public function offsetSet($offset, $value): void
     {
@@ -297,9 +292,9 @@ class ArrayView implements ArrayViewInterface
     }
 
     /**
-     * @param numeric|string|ArraySelectorInterface $offset
-     * @return void
      * @throws NotSupportedError
+     *
+     * {@inheritDoc}
      */
     public function offsetUnset($offset): void
     {
@@ -307,13 +302,16 @@ class ArrayView implements ArrayViewInterface
     }
 
     /**
-     * @return int
+     * {@inheritDoc}
      */
     public function count(): int
     {
         return $this->getParentSize();
     }
 
+    /**
+     * @return int
+     */
     protected function getParentSize(): int
     {
         return ($this->parentView !== null)
