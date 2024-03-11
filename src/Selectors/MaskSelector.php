@@ -2,11 +2,11 @@
 
 namespace Smoren\ArrayView\Selectors;
 
-use Smoren\ArrayView\Interfaces\ArraySelectorInterface;
 use Smoren\ArrayView\Interfaces\ArrayViewInterface;
+use Smoren\ArrayView\Interfaces\MaskSelectorInterface;
 use Smoren\ArrayView\Views\ArrayMaskView;
 
-class MaskSelector implements ArraySelectorInterface
+class MaskSelector implements MaskSelectorInterface
 {
     /**
      * @var array<bool>
@@ -34,5 +34,13 @@ class MaskSelector implements ArraySelectorInterface
     public function select(ArrayViewInterface $source, ?bool $readonly = null): ArrayMaskView
     {
         return new ArrayMaskView($source, $this->value, $readonly ?? $source->isReadonly());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getValue(): array
+    {
+        return $this->value;
     }
 }

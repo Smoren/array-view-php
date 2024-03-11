@@ -15,4 +15,9 @@ interface ArraySelectorInterface
      * @return ArrayViewInterface<T>
      */
     public function select(ArrayViewInterface $source, ?bool $readonly = null): ArrayViewInterface;
+
+    /**
+     * @return mixed
+     */
+    public function getValue();
 }

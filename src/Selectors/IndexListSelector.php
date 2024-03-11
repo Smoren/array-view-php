@@ -2,11 +2,11 @@
 
 namespace Smoren\ArrayView\Selectors;
 
-use Smoren\ArrayView\Interfaces\ArraySelectorInterface;
 use Smoren\ArrayView\Interfaces\ArrayViewInterface;
+use Smoren\ArrayView\Interfaces\IndexListSelectorInterface;
 use Smoren\ArrayView\Views\ArrayIndexListView;
 
-final class IndexListSelector implements ArraySelectorInterface
+final class IndexListSelector implements IndexListSelectorInterface
 {
     /**
      * @var array<int>
@@ -34,5 +34,13 @@ final class IndexListSelector implements ArraySelectorInterface
     public function select(ArrayViewInterface $source, ?bool $readonly = null): ArrayIndexListView
     {
         return new ArrayIndexListView($source, $this->value, $readonly ?? $source->isReadonly());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getValue(): array
+    {
+        return $this->value;
     }
 }

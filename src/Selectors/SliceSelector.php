@@ -32,4 +32,12 @@ class SliceSelector extends Slice implements ArraySelectorInterface
     {
         return new ArraySliceView($source, $this, $readonly ?? $source->isReadonly());
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getValue(): Slice
+    {
+        return $this;
+    }
 }

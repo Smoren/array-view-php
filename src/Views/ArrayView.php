@@ -12,6 +12,7 @@ use Smoren\ArrayView\Exceptions\ReadonlyError;
 use Smoren\ArrayView\Exceptions\ValueError;
 use Smoren\ArrayView\Interfaces\ArraySelectorInterface;
 use Smoren\ArrayView\Interfaces\ArrayViewInterface;
+use Smoren\ArrayView\Interfaces\MaskSelectorInterface;
 use Smoren\ArrayView\Selectors\MaskSelector;
 use Smoren\ArrayView\Selectors\SliceSelector;
 use Smoren\ArrayView\Structs\Slice;
@@ -100,9 +101,10 @@ class ArrayView implements ArrayViewInterface
     /**
      * {@inheritDoc}
      */
-    public function is(callable $predicate): ArraySelectorInterface
+    public function is(callable $predicate): MaskSelectorInterface
     {
-        return new MaskSelector(array_map($predicate, $this->toArray()));
+        $data = $this->toArray();
+        return new MaskSelector(array_map($predicate, $data, array_keys($data)));
     }
 
     /**

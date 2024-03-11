@@ -38,9 +38,9 @@ interface ArrayViewInterface extends \ArrayAccess, \IteratorAggregate, \Countabl
 
     /**
      * @param callable(T): bool $predicate
-     * @return ArraySelectorInterface
+     * @return MaskSelectorInterface
      */
-    public function is(callable $predicate): ArraySelectorInterface;
+    public function is(callable $predicate): MaskSelectorInterface;
 
     /**
      * @param ArraySelectorInterface|string $selector
