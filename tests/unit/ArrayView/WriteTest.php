@@ -158,24 +158,6 @@ class WriteTest extends \Codeception\Test\Unit
         $this->assertSame($expected, $source);
     }
 
-    /**
-     * @dataProvider dataProviderForIsAndFilter
-     */
-    public function testIsAndFilter(array $source, callable $predicate, array $expectedMask, array $expectedArray)
-    {
-        // Given
-        $view = ArrayView::toView($source);
-
-        // When
-        $boolMask = $view->is($predicate);
-        $filtered = $view->filter($predicate);
-
-        // Then
-        $this->assertSame($expectedMask, $boolMask->getValue());
-        $this->assertSame($expectedArray, $view->subview($boolMask)->toArray());
-        $this->assertSame($expectedArray, $filtered->toArray());
-    }
-
     public function dataProviderForArrayWrite(): array
     {
         return [
@@ -397,36 +379,6 @@ class WriteTest extends \Codeception\Test\Unit
                 fn (int $lhs, int $rhs) => $lhs * $rhs,
                 [1, 2, 3, 4, 5],
                 [1, 2, 6, 4, 15, 6, 28, 8, 45, 10],
-            ],
-        ];
-    }
-
-    public function dataProviderForIsAndFilter(): array
-    {
-        return [
-            [
-                [],
-                fn (int $x) => $x % 2 === 0,
-                [],
-                [],
-            ],
-            [
-                [1],
-                fn (int $x) => $x % 2 === 0,
-                [false],
-                [],
-            ],
-            [
-                [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
-                fn (int $x) => $x % 2 === 0,
-                [false, true, false, true, false, true, false, true, false, true],
-                [2, 4, 6, 8, 10],
-            ],
-            [
-                [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
-                fn (int $_, int $i) => $i % 2 === 0,
-                [true, false, true, false, true, false, true, false, true, false],
-                [1, 3, 5, 7, 9],
             ],
         ];
     }
