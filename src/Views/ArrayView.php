@@ -254,7 +254,8 @@ class ArrayView implements ArrayViewInterface
             return $this->subview($offset)->toArray();
         }
 
-        throw new KeyError("Invalid key: \"{$offset}\".");
+        $strOffset = is_scalar($offset) ? strval($offset) : gettype($offset);
+        throw new KeyError("Invalid key: \"{$strOffset}\".");
     }
 
     /**
@@ -289,7 +290,8 @@ class ArrayView implements ArrayViewInterface
             return;
         }
 
-        throw new KeyError("Invalid key: \"{$offset}\".");
+        $strOffset = is_scalar($offset) ? strval($offset) : gettype($offset);
+        throw new KeyError("Invalid key: \"{$strOffset}\".");
     }
 
     /**
@@ -332,6 +334,10 @@ class ArrayView implements ArrayViewInterface
      */
     private function numericOffsetExists($offset): bool
     {
+        if (is_nan($offset) || is_infinite($offset)) {
+            return false;
+        }
+
         try {
             $index = $this->convertIndex(intval($offset));
         } catch (IndexError $e) {

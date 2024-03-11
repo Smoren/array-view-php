@@ -3,6 +3,7 @@
 namespace Smoren\ArrayView\Tests\Unit\ArrayView;
 
 use Smoren\ArrayView\Exceptions\IndexError;
+use Smoren\ArrayView\Exceptions\KeyError;
 use Smoren\ArrayView\Exceptions\ValueError;
 use Smoren\ArrayView\Views\ArrayView;
 
@@ -17,7 +18,8 @@ class ErrorsTest extends \Codeception\Test\Unit
         foreach ($indexes as $index) {
             try {
                 $_ = $view[$index];
-                $this->fail();
+                $strIndex = strval($index);
+                $this->fail("IndexError not thrown for key: \"{$strIndex}\"");
             } catch (IndexError $e) {
                 $this->assertSame("Index {$index} is out of range.", $e->getMessage());
             }
@@ -33,9 +35,44 @@ class ErrorsTest extends \Codeception\Test\Unit
         foreach ($indexes as $index) {
             try {
                 $view[$index] = 1;
-                $this->fail();
+                $strIndex = strval($index);
+                $this->fail("IndexError not thrown for key: \"{$strIndex}\"");
             } catch (IndexError $e) {
                 $this->assertSame("Index {$index} is out of range.", $e->getMessage());
+            }
+        }
+    }
+
+    /**
+     * @dataProvider dataProviderForBadKeys
+     */
+    public function testReadKeyError(array $source, array $keys)
+    {
+        $view = ArrayView::toView($source);
+        foreach ($keys as $key) {
+            $strKey = is_scalar($key) ? strval($key) : gettype($key);
+            try {
+                $_ = $view[$key];
+                $this->fail("KeyError not thrown for key: \"{$strKey}\"");
+            } catch (KeyError $e) {
+                $this->assertSame("Invalid key: \"{$strKey}\".", $e->getMessage());
+            }
+        }
+    }
+
+    /**
+     * @dataProvider dataProviderForBadKeys
+     */
+    public function testWriteKeyError(array $source, array $keys)
+    {
+        $view = ArrayView::toView($source);
+        foreach ($keys as $key) {
+            $strKey = is_scalar($key) ? strval($key) : gettype($key);
+            try {
+                $view[$key] = 1;
+                $this->fail("KeyError not thrown for key: \"{$strKey}\"");
+            } catch (KeyError $e) {
+                $this->assertSame("Invalid key: \"{$strKey}\".", $e->getMessage());
             }
         }
     }
@@ -53,9 +90,25 @@ class ErrorsTest extends \Codeception\Test\Unit
     public function dataProviderForOutOfRangeIndexes(): array
     {
         return [
-            [[], [-2, -1, 0, 1]],
-            [[1], [-3, -2, 1, 2]],
-            [[1, 2, 3], [-100, -5, 4, 100]],
+            [[], [-2, -1, 0, 1, NAN, INF, -INF]],
+            [[1], [-3, -2, 1, 2, NAN, INF, -INF]],
+            [[1, 2, 3], [-100, -5, 4, 100, NAN, INF, -INF]],
+        ];
+    }
+
+    public function dataProviderForBadKeys(): array
+    {
+        return [
+            [[], ['a', 'b', 'c']],
+            [[], ['1a', 'test', '!']],
+            [[], [[], [1, 2, 3], ['a' => 'test']], new \stdClass([])],
+            [[], [null, true, false, [], [1, 2, 3], ['a' => 'test']], new \stdClass([])],
+            [[1], ['a', 'b', 'c']],
+            [[1], ['1a', 'test', '!']],
+            [[1], [null, true, false, [], [1, 2, 3], ['a' => 'test']], new \stdClass([])],
+            [[1, 2, 3], ['a', 'b', 'c']],
+            [[1, 2, 3], ['1a', 'test', '!']],
+            [[2], [null, true, false, [], [1, 2, 3], ['a' => 'test']], new \stdClass([])],
         ];
     }
 
