@@ -239,6 +239,7 @@ class ArrayView implements ArrayViewInterface
     #[\ReturnTypeWillChange]
     public function offsetGet($offset)
     {
+        /** @var mixed $offset */
         if (\is_numeric($offset)) {
             if (!$this->numericOffsetExists($offset)) {
                 throw new IndexError("Index {$offset} is out of range.");
@@ -254,7 +255,7 @@ class ArrayView implements ArrayViewInterface
             return $this->subview($offset)->toArray();
         }
 
-        $strOffset = is_scalar($offset) ? strval($offset) : gettype($offset);
+        $strOffset = \is_scalar($offset) ? \strval($offset) : \gettype($offset);
         throw new KeyError("Invalid key: \"{$strOffset}\".");
     }
 
@@ -265,6 +266,7 @@ class ArrayView implements ArrayViewInterface
      */
     public function offsetSet($offset, $value): void
     {
+        /** @var mixed $offset */
         if ($this->isReadonly()) {
             throw new ReadonlyError("Cannot modify a readonly view.");
         }
@@ -290,7 +292,7 @@ class ArrayView implements ArrayViewInterface
             return;
         }
 
-        $strOffset = is_scalar($offset) ? strval($offset) : gettype($offset);
+        $strOffset = \is_scalar($offset) ? \strval($offset) : \gettype($offset);
         throw new KeyError("Invalid key: \"{$strOffset}\".");
     }
 
@@ -334,7 +336,7 @@ class ArrayView implements ArrayViewInterface
      */
     private function numericOffsetExists($offset): bool
     {
-        if (is_nan($offset) || is_infinite($offset)) {
+        if (!\is_string($offset) && \is_numeric($offset) && (\is_nan($offset) || \is_infinite($offset))) {
             return false;
         }
 
