@@ -124,7 +124,8 @@ class ArrayView implements ArrayViewInterface
      */
     public function apply(callable $mapper): self
     {
-        for ($i = 0; $i < \count($this); $i++) {
+        $size = \count($this);
+        for ($i = 0; $i < $size; $i++) {
             /** @var T $item */
             $item = $this[$i];
             $this[$i] = $mapper($item, $i);
@@ -151,7 +152,8 @@ class ArrayView implements ArrayViewInterface
 
         $dataView = ArrayView::toView($data);
 
-        for ($i = 0; $i < \count($this); $i++) {
+        $size = \count($this);
+        for ($i = 0; $i < $size; $i++) {
             /** @var T $lhs */
             $lhs = $this[$i];
             /** @var U $rhs */
@@ -170,7 +172,8 @@ class ArrayView implements ArrayViewInterface
     public function set($newValues): self
     {
         if (!\is_array($newValues) && !($newValues instanceof ArrayViewInterface)) {
-            for ($i = 0; $i < \count($this); $i++) {
+            $size = \count($this);
+            for ($i = 0; $i < $size; $i++) {
                 $this[$i] = $newValues;
             }
             return $this;
@@ -183,7 +186,8 @@ class ArrayView implements ArrayViewInterface
 
         $newValuesView = ArrayView::toView($newValues);
 
-        for ($i = 0; $i < \count($this); $i++) {
+        $size = \count($this);
+        for ($i = 0; $i < $size; $i++) {
             $this[$i] = $newValuesView[$i];
         }
 
@@ -195,7 +199,8 @@ class ArrayView implements ArrayViewInterface
      */
     public function getIterator(): \Generator
     {
-        for ($i = 0; $i < \count($this); $i++) {
+        $size = \count($this);
+        for ($i = 0; $i < $size; $i++) {
             /** @var T $item */
             $item = $this[$i];
             yield $item;
