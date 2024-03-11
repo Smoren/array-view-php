@@ -236,7 +236,7 @@ class IndexTest extends \Codeception\Test\Unit
         $this->expectExceptionMessageMatches('/Index \d+ is out of range/');
 
         // When
-        $slice = $arrayView[$i];
+        $number = $arrayView[$i];
     }
 
     public static function dataProviderForIndexesLargerThanTwo(): array
@@ -267,7 +267,7 @@ class IndexTest extends \Codeception\Test\Unit
         $this->expectExceptionMessageMatches('/Index -\d+ is out of range/');
 
         // When
-        $slice = $arrayView[$i];
+        $number = $arrayView[$i];
     }
 
     public static function dataProviderForIndexesSmallerThanThanNegativeThree(): array
@@ -297,8 +297,7 @@ class IndexTest extends \Codeception\Test\Unit
         $this->expectException(KeyError::class);
 
         // When
-        $slice = $arrayView[$i];
-        var_dump($slice);
+        $number = $arrayView[$i];
     }
 
     public static function dataProviderForNonIntegerIndexes(): array
