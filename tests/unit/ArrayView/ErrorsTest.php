@@ -4,7 +4,9 @@ namespace Smoren\ArrayView\Tests\Unit\ArrayView;
 
 use Smoren\ArrayView\Exceptions\IndexError;
 use Smoren\ArrayView\Exceptions\KeyError;
+use Smoren\ArrayView\Exceptions\SizeError;
 use Smoren\ArrayView\Exceptions\ValueError;
+use Smoren\ArrayView\Selectors\MaskSelector;
 use Smoren\ArrayView\Views\ArrayView;
 
 class ErrorsTest extends \Codeception\Test\Unit
@@ -78,6 +80,54 @@ class ErrorsTest extends \Codeception\Test\Unit
     }
 
     /**
+     * @dataProvider dataProviderForBadSizeMask
+     */
+    public function testReadByMaskSizeError(array $source, array $boolMask)
+    {
+        $view = ArrayView::toView($source);
+
+        $boolMaskSize = \count($boolMask);
+        $sourceSize = \count($source);
+
+        $this->expectException(SizeError::class);
+        $this->expectExceptionMessage("Mask size not equal to source length ({$boolMaskSize} != {$sourceSize}).");
+
+        $_ = $view[new MaskSelector($boolMask)];
+    }
+
+    /**
+     * @dataProvider dataProviderForBadSizeMask
+     */
+    public function testGetSubviewByMaskSizeError(array $source, array $boolMask)
+    {
+        $view = ArrayView::toView($source);
+
+        $boolMaskSize = \count($boolMask);
+        $sourceSize = \count($source);
+
+        $this->expectException(SizeError::class);
+        $this->expectExceptionMessage("Mask size not equal to source length ({$boolMaskSize} != {$sourceSize}).");
+
+        $view->subview(new MaskSelector($boolMask));
+    }
+
+    /**
+     * @dataProvider dataProviderForBadSizeMask
+     */
+    public function testWriteByMaskSizeError(array $source, array $boolMask)
+    {
+        $view = ArrayView::toView($source);
+
+        $boolMaskSize = \count($boolMask);
+        $sourceSize = \count($source);
+
+        $this->expectException(SizeError::class);
+        $this->expectExceptionMessage("Mask size not equal to source length ({$boolMaskSize} != {$sourceSize}).");
+
+        $view[new MaskSelector($boolMask)] = $boolMask;
+    }
+
+    /**
      * @dataProvider dataProviderForNonSequentialError
      */
     public function testNonSequentialError(callable $arrayGetter)
@@ -109,6 +159,21 @@ class ErrorsTest extends \Codeception\Test\Unit
             [[1, 2, 3], ['a', 'b', 'c']],
             [[1, 2, 3], ['1a', 'test', '!']],
             [[2], [null, true, false, [], [1, 2, 3], ['a' => 'test']], new \stdClass([])],
+        ];
+    }
+
+    public function dataProviderForBadSizeMask(): array
+    {
+        return [
+            [[], [1]],
+            [[1], []],
+            [[1], [1, 0]],
+            [[1, 2, 3], [1]],
+            [[1, 2, 3], [0]],
+            [[1, 2, 3], [0, 1]],
+            [[1, 2, 3], [0, 1, 1, 0]],
+            [[1, 2, 3], [1, 1, 1, 1, 1]],
+            [[1, 2, 3], [0, 0, 0, 0, 0]],
         ];
     }
 

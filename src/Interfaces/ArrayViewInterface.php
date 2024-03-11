@@ -77,4 +77,40 @@ interface ArrayViewInterface extends \ArrayAccess, \IteratorAggregate, \Countabl
      * @return bool
      */
     public function isReadonly(): bool;
+
+    /**
+     * @return int
+     */
+    public function count(): int;
+
+    /**
+     * @param numeric|string|ArraySelectorInterface $offset
+     * @return bool
+     */
+    public function offsetExists($offset): bool;
+
+    /**
+     * @param numeric|string|ArraySelectorInterface $offset
+     * @return T|array<T>
+     */
+    #[\ReturnTypeWillChange]
+    public function offsetGet($offset);
+
+    /**
+     * @param numeric|string|ArraySelectorInterface $offset
+     * @param T|array<T>|ArrayViewInterface<T> $value
+     * @return void
+     */
+    public function offsetSet($offset, $value): void;
+
+    /**
+     * @param numeric|string|ArraySelectorInterface $offset
+     * @return void
+     */
+    public function offsetUnset($offset): void;
+
+    /**
+     * @return \Generator<int, T>
+     */
+    public function getIterator(): \Generator;
 }
