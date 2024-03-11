@@ -268,7 +268,11 @@ class ArrayView implements ArrayViewInterface
             throw new ReadonlyError("Cannot modify a readonly view.");
         }
 
-        if (\is_numeric($offset) && $this->numericOffsetExists($offset)) {
+        if (\is_numeric($offset)) {
+            if (!$this->numericOffsetExists($offset)) {
+                throw new IndexError("Index {$offset} is out of range.");
+            }
+
             // @phpstan-ignore-next-line
             $this->source[$this->convertIndex(\intval($offset))] = $value;
             return;

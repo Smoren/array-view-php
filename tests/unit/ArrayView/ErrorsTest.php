@@ -2,11 +2,44 @@
 
 namespace Smoren\ArrayView\Tests\Unit\ArrayView;
 
+use Smoren\ArrayView\Exceptions\IndexError;
 use Smoren\ArrayView\Exceptions\ValueError;
 use Smoren\ArrayView\Views\ArrayView;
 
 class ErrorsTest extends \Codeception\Test\Unit
 {
+    /**
+     * @dataProvider dataProviderForOutOfRangeIndexes
+     */
+    public function testReadIndexError(array $source, array $indexes)
+    {
+        $view = ArrayView::toView($source);
+        foreach ($indexes as $index) {
+            try {
+                $_ = $view[$index];
+                $this->fail();
+            } catch (IndexError $e) {
+                $this->assertSame("Index {$index} is out of range.", $e->getMessage());
+            }
+        }
+    }
+
+    /**
+     * @dataProvider dataProviderForOutOfRangeIndexes
+     */
+    public function testWriteIndexError(array $source, array $indexes)
+    {
+        $view = ArrayView::toView($source);
+        foreach ($indexes as $index) {
+            try {
+                $view[$index] = 1;
+                $this->fail();
+            } catch (IndexError $e) {
+                $this->assertSame("Index {$index} is out of range.", $e->getMessage());
+            }
+        }
+    }
+
     /**
      * @dataProvider dataProviderForNonSequentialError
      */
@@ -15,6 +48,15 @@ class ErrorsTest extends \Codeception\Test\Unit
         $nonSequentialArray = $arrayGetter();
         $this->expectException(ValueError::class);
         ArrayView::toView($nonSequentialArray);
+    }
+
+    public function dataProviderForOutOfRangeIndexes(): array
+    {
+        return [
+            [[], [-2, -1, 0, 1]],
+            [[1], [-3, -2, 1, 2]],
+            [[1, 2, 3], [-100, -5, 4, 100]],
+        ];
     }
 
     public function dataProviderForNonSequentialError(): array
