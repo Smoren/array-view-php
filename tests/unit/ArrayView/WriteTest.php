@@ -143,6 +143,39 @@ class WriteTest extends \Codeception\Test\Unit
         $this->assertSame($expected, $source);
     }
 
+    /**
+     * @dataProvider dataProviderForApplyWith
+     */
+    public function testApplyWith(array $source, callable $viewGetter, callable $mapper, array $arg, array $expected)
+    {
+        // Given
+        $view = $viewGetter($source);
+
+        // When
+        $view->applyWith($arg, $mapper);
+
+        // Then
+        $this->assertSame($expected, $source);
+    }
+
+    /**
+     * @dataProvider dataProviderForIsAndFilter
+     */
+    public function testIsAndFilter(array $source, callable $predicate, array $expectedMask, array $expectedArray)
+    {
+        // Given
+        $view = ArrayView::toView($source);
+
+        // When
+        $boolMask = $view->is($predicate);
+        $filtered = $view->filter($predicate);
+
+        // Then
+        $this->assertSame($expectedMask, $boolMask->getValue());
+        $this->assertSame($expectedArray, $view->subview($boolMask)->toArray());
+        $this->assertSame($expectedArray, $filtered->toArray());
+    }
+
     public function dataProviderForArrayWrite(): array
     {
         return [
@@ -323,6 +356,77 @@ class WriteTest extends \Codeception\Test\Unit
                     ->subview(new IndexListSelector([0, 1, 2])),
                 fn (int $item) => $item * 2,
                 [1, 4, 3, 8, 5, 12, 7, 8, 9, 10],
+            ],
+        ];
+    }
+
+    public function dataProviderForApplyWith(): array
+    {
+        return [
+            [
+                [],
+                fn (array &$source) => ArrayView::toView($source),
+                fn (int $lhs, int $rhs) => $lhs + $rhs,
+                [],
+                [],
+            ],
+            [
+                [1],
+                fn (array &$source) => ArrayView::toView($source),
+                fn (int $lhs, int $rhs) => $lhs + $rhs,
+                [2],
+                [3],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+                fn (array &$source) => ArrayView::toView($source),
+                fn (int $lhs, int $rhs) => $lhs + $rhs,
+                [10, 20, 30, 40, 50, 60, 70, 80, 90, 100],
+                [11, 22, 33, 44, 55, 66, 77, 88, 99, 110],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+                fn (array &$source) => ArrayView::toView($source),
+                fn (int $lhs, int $rhs, int $index) => $index % 2 === 0 ? $lhs : $rhs,
+                [10, 20, 30, 40, 50, 60, 70, 80, 90, 100],
+                [1, 20, 3, 40, 5, 60, 7, 80, 9, 100],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+                fn (array &$source) => ArrayView::toView($source)->subview('::2'),
+                fn (int $lhs, int $rhs) => $lhs * $rhs,
+                [1, 2, 3, 4, 5],
+                [1, 2, 6, 4, 15, 6, 28, 8, 45, 10],
+            ],
+        ];
+    }
+
+    public function dataProviderForIsAndFilter(): array
+    {
+        return [
+            [
+                [],
+                fn (int $x) => $x % 2 === 0,
+                [],
+                [],
+            ],
+            [
+                [1],
+                fn (int $x) => $x % 2 === 0,
+                [false],
+                [],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+                fn (int $x) => $x % 2 === 0,
+                [false, true, false, true, false, true, false, true, false, true],
+                [2, 4, 6, 8, 10],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+                fn (int $_, int $i) => $i % 2 === 0,
+                [true, false, true, false, true, false, true, false, true, false],
+                [1, 3, 5, 7, 9],
             ],
         ];
     }
