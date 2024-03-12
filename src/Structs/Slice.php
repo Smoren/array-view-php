@@ -181,7 +181,7 @@ class Slice
         $start = $this->start ?? 0;
         $end = $this->end ?? $containerSize;
 
-        [$start, $end, $step] = [\round($start), \round($end), \round($step)];
+        [$start, $end, $step] = [(int)\round($start), (int)\round($end), (int)\round($step)];
 
         $start = Util::normalizeIndex($start, $containerSize, false);
         $end = Util::normalizeIndex($end, $containerSize, false);
@@ -205,7 +205,7 @@ class Slice
         $start = $this->start ?? $containerSize - 1;
         $end = $this->end ?? -1;
 
-        [$start, $end, $step] = [\round($start), \round($end), \round($step)];
+        [$start, $end, $step] = [(int)\round($start), (int)\round($end), (int)\round($step)];
 
         $start = Util::normalizeIndex($start, $containerSize, false);
 
