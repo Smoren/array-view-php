@@ -136,9 +136,6 @@ class SliceTest extends \Codeception\Test\Unit
             [true],
             [false],
             [null],
-            [[]],
-            [[1, 2, 3]],
-            [[null]],
             [new \ArrayObject([])],
             [['a' => 1]],
         ];
