@@ -88,9 +88,9 @@ use Smoren\ArrayView\Selectors\MaskSelector;
 use Smoren\ArrayView\Selectors\SliceSelector;
 use Smoren\ArrayView\Views\ArrayView;
 
-const $originalArray = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+$originalArray = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 
-const $subview = ArrayView::toView(originalArray)
+$subview = ArrayView::toView(originalArray)
     ->subview('::2')                                             // [1, 3, 5, 7, 9]
     ->subview(new MaskSelector([true, false, true, true, true])) // [1, 5, 7, 9]
     ->subview(new IndexListSelector([0, 1, 2]))                  // [1, 5, 7]
