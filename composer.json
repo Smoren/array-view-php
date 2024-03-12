@@ -1,7 +1,24 @@
 {
   "name": "smoren/array-view",
-  "description": "Schematic data converter",
-  "keywords": ["converter", "schema"],
+  "description": "Create array views for easy data manipulation, select elements using Python-like slice notation, enable efficient selection of elements using index lists and boolean masks.",
+  "keywords": [
+    "array-view",
+    "slice",
+    "slicing",
+    "array",
+    "array-index",
+    "indexing",
+    "negative-indexes",
+    "negative",
+    "range",
+    "selector",
+    "collection",
+    "collections",
+    "python-like",
+    "array-viewer",
+    "view",
+    "data-view"
+  ],
   "license": "MIT",
   "authors": [
     {
