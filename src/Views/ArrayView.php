@@ -294,6 +294,10 @@ class ArrayView implements ArrayViewInterface
             return false;
         }
 
+        if (\is_numeric($offset) && !\is_integer($offset + 0)) {
+            return false;
+        }
+
         try {
             $index = $this->convertIndex(intval($offset));
         } catch (IndexError $e) {

@@ -15,8 +15,11 @@ class ReadTest extends \Codeception\Test\Unit
     public function testReadByMethod(array $source, array $indexes, array $expected)
     {
         $view = ArrayView::toView($source);
-        $subview = $view->subview(new IndexListSelector($indexes));
 
+        $selector = new IndexListSelector($indexes);
+        $this->assertSame($indexes, $selector->getValue());
+
+        $subview = $view->subview($selector);
         $this->assertInstanceOf(ArrayIndexListView::class, $subview);
 
         $this->assertSame($expected, [...$subview]);

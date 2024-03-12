@@ -14,8 +14,11 @@ class ReadTest extends \Codeception\Test\Unit
     public function testReadByMethod(array $source, array $mask, array $expected)
     {
         $view = ArrayView::toView($source);
-        $subview = $view->subview(new MaskSelector($mask));
 
+        $selector = new MaskSelector($mask);
+        $this->assertSame($mask, $selector->getValue());
+
+        $subview = $view->subview($selector);
         $this->assertInstanceOf(ArrayMaskView::class, $subview);
 
         $this->assertSame($expected, [...$subview]);

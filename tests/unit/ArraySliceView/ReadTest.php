@@ -76,8 +76,10 @@ class ReadTest extends \Codeception\Test\Unit
     public function testReadByMethodAndIndex(array $source, $config, array $expected)
     {
         $view = ArrayView::toView($source);
-        $slicedArray = $view->subview(new SliceSelector($config))[':'];
+        $selector = new SliceSelector($config);
+        $this->assertSame($selector, $selector->getValue());
 
+        $slicedArray = $view->subview($selector)[':'];
         $this->assertSame($expected, $slicedArray);
         $this->assertSame(\count($expected), \count($slicedArray));
 
