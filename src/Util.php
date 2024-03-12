@@ -4,6 +4,9 @@ namespace Smoren\ArrayView;
 
 use Smoren\ArrayView\Exceptions\IndexError;
 
+/**
+ * @internal
+ */
 class Util
 {
     /**
