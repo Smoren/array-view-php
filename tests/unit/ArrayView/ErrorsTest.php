@@ -7,6 +7,7 @@ use Smoren\ArrayView\Exceptions\KeyError;
 use Smoren\ArrayView\Exceptions\SizeError;
 use Smoren\ArrayView\Exceptions\ValueError;
 use Smoren\ArrayView\Selectors\MaskSelector;
+use Smoren\ArrayView\Selectors\SliceSelector;
 use Smoren\ArrayView\Views\ArrayView;
 
 class ErrorsTest extends \Codeception\Test\Unit
@@ -128,6 +129,64 @@ class ErrorsTest extends \Codeception\Test\Unit
     }
 
     /**
+     * @dataProvider dataProviderForInvalidSlice
+     */
+    public function testInvalidSliceRead(array $source, string $slice)
+    {
+        $view = ArrayView::toView($source);
+
+        $this->expectException(IndexError::class);
+        $this->expectExceptionMessage("Step cannot be 0.");
+
+        $_ = $view[new SliceSelector($slice)];
+    }
+
+    /**
+     * @dataProvider dataProviderForInvalidSlice
+     */
+    public function testInvalidSliceWrite(array $source, string $slice)
+    {
+        $view = ArrayView::toView($source);
+
+        $this->expectException(IndexError::class);
+        $this->expectExceptionMessage("Step cannot be 0.");
+
+        $view[new SliceSelector($slice)] = [1, 2, 3];
+    }
+
+    /**
+     * @dataProvider dataProviderForApplyWithSizeError
+     */
+    public function testApplyWithSizeError(array $source, callable $viewGetter, callable $mapper, array $toApplyWith)
+    {
+        $view = ArrayView::toView($source);
+
+        $sourceSize = \count($source);
+        $argSize = \count($toApplyWith);
+
+        $this->expectException(SizeError::class);
+        $this->expectExceptionMessage("Length of values array not equal to view length ({$argSize} != {$sourceSize}).");
+
+        $view->applyWith($toApplyWith, $mapper);
+    }
+
+    /**
+     * @dataProvider dataProviderForWriteSizeError
+     */
+    public function testWriteSizeError(array $source, callable $viewGetter, array $toWrite)
+    {
+        $view = ArrayView::toView($source);
+
+        $sourceSize = \count($source);
+        $argSize = \count($toWrite);
+
+        $this->expectException(SizeError::class);
+        $this->expectExceptionMessage("Length of values array not equal to view length ({$argSize} != {$sourceSize}).");
+
+        $view[':'] = $toWrite;
+    }
+
+    /**
      * @dataProvider dataProviderForNonSequentialError
      */
     public function testNonSequentialError(callable $arrayGetter)
@@ -174,6 +233,97 @@ class ErrorsTest extends \Codeception\Test\Unit
             [[1, 2, 3], [0, 1, 1, 0]],
             [[1, 2, 3], [1, 1, 1, 1, 1]],
             [[1, 2, 3], [0, 0, 0, 0, 0]],
+        ];
+    }
+
+    public function dataProviderForInvalidSlice(): array
+    {
+        return [
+            [[], '::0'],
+            [[], '0:0:0'],
+            [[], '0:1:0'],
+            [[], '0::0'],
+            [[], ':-1:0'],
+            [[], '1:-1:0'],
+            [[1], '::0'],
+            [[1], '0:0:0'],
+            [[1], '0:1:0'],
+            [[1], '0::0'],
+            [[1], ':-1:0'],
+            [[1], '1:-1:0'],
+            [[1, 2, 3], '::0'],
+            [[1, 2, 3], '0:0:0'],
+            [[1, 2, 3], '0:1:0'],
+            [[1, 2, 3], '0::0'],
+            [[1, 2, 3], ':-1:0'],
+            [[1, 2, 3], '1:-1:0'],
+        ];
+    }
+
+    public function dataProviderForApplyWithSizeError(): array
+    {
+        return [
+            [
+                [],
+                fn (array &$source) => ArrayView::toView($source),
+                fn (int $item) => $item,
+                [1],
+            ],
+            [
+                [1],
+                fn (array &$source) => ArrayView::toView($source),
+                fn (int $item) => $item,
+                [],
+            ],
+            [
+                [1],
+                fn (array &$source) => ArrayView::toView($source),
+                fn (int $item) => $item,
+                [1, 2],
+            ],
+            [
+                [1, 2, 3],
+                fn (array &$source) => ArrayView::toView($source),
+                fn (int $item) => $item,
+                [1, 2],
+            ],
+            [
+                [1, 2, 3],
+                fn (array &$source) => ArrayView::toView($source),
+                fn (int $item) => $item,
+                [1, 2, 3, 4, 5],
+            ],
+        ];
+    }
+
+    public function dataProviderForWriteSizeError(): array
+    {
+        return [
+            [
+                [],
+                fn (array &$source) => ArrayView::toView($source),
+                [1],
+            ],
+            [
+                [1],
+                fn (array &$source) => ArrayView::toView($source),
+                [],
+            ],
+            [
+                [1],
+                fn (array &$source) => ArrayView::toView($source),
+                [1, 2],
+            ],
+            [
+                [1, 2, 3],
+                fn (array &$source) => ArrayView::toView($source),
+                [1, 2],
+            ],
+            [
+                [1, 2, 3],
+                fn (array &$source) => ArrayView::toView($source),
+                [1, 2, 3, 4, 5],
+            ],
         ];
     }
 
