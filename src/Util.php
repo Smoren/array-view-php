@@ -37,13 +37,14 @@ class Util
      * Check if an array is sequential (indexed from 0 to n-1).
      *
      * @param array<mixed> $source The array to check for sequential indexing.
+     * @param bool $forceCustomImplementation Flag only for tests.
      *
      * @return bool Returns true if the array has sequential indexing, false otherwise.
      */
-    public static function isArraySequential(array $source): bool
+    public static function isArraySequential(array $source, bool $forceCustomImplementation = false): bool
     {
-        if (!function_exists('array_is_list')) {
-            return array_keys($source) === range(0, count($source) - 1);
+        if (!function_exists('array_is_list') || $forceCustomImplementation) {
+            return \count($source) === 0 || array_keys($source) === range(0, count($source) - 1);
         }
         return array_is_list($source);
     }
