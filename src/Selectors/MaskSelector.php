@@ -8,15 +8,20 @@ use Smoren\ArrayView\Interfaces\ArrayViewInterface;
 use Smoren\ArrayView\Interfaces\MaskSelectorInterface;
 use Smoren\ArrayView\Views\ArrayMaskView;
 
+/**
+ * Represents a mask selector that selects elements based on the provided array of boolean mask values.
+ */
 class MaskSelector implements MaskSelectorInterface
 {
     /**
-     * @var array<bool>
+     * @var array<bool> The array of boolean mask values to select elements based on.
      */
     private $value;
 
     /**
-     * @param array<bool>|ArrayViewInterface<bool> $value
+     * Creates a new MaskSelector instance with the provided array of boolean mask values.
+     *
+     * @param array<bool>|ArrayViewInterface<bool> $value The array or array view of boolean mask values.
      */
     public function __construct($value)
     {
@@ -24,12 +29,14 @@ class MaskSelector implements MaskSelectorInterface
     }
 
     /**
-     * @template T
+     * Selects elements from the source array based on the mask values.
      *
-     * @param ArrayViewInterface<T> $source
-     * @param bool|null $readonly
+     * @template T The type of elements in the source array view.
      *
-     * @return ArrayMaskView<T>
+     * @param ArrayViewInterface<T> $source The source array to select elements from.
+     * @param bool|null $readonly Whether the selection should be read-only.
+     *
+     * @return ArrayMaskView<T> The view containing the selected elements.
      *
      * {@inheritDoc}
      */

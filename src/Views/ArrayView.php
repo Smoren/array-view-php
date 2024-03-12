@@ -16,6 +16,9 @@ use Smoren\ArrayView\Traits\ArrayViewAccessTrait;
 use Smoren\ArrayView\Util;
 
 /**
+ * Class representing a view of an array or another array view
+ * with additional methods for filtering, mapping, and transforming the data.
+ *
  * @template T
  *
  * @implements ArrayViewInterface<T>
@@ -23,20 +26,20 @@ use Smoren\ArrayView\Util;
 class ArrayView implements ArrayViewInterface
 {
     /**
-     * @use ArrayViewAccessTrait<T>
+     * @use ArrayViewAccessTrait<T> for array access methods.
      */
     use ArrayViewAccessTrait;
 
     /**
-     * @var array<T>|ArrayViewInterface<T>
+     * @var array<T>|ArrayViewInterface<T> The source array or view.
      */
     protected $source;
     /**
-     * @var bool
+     * @var bool Flag indicating if the view is readonly.
      */
     protected bool $readonly;
     /**
-     * @var ArrayViewInterface<T>|null
+     * @var ArrayViewInterface<T>|null The parent view of the current view.
      */
     protected ?ArrayViewInterface $parentView;
 
@@ -65,15 +68,17 @@ class ArrayView implements ArrayViewInterface
     }
 
     /**
-     * @param array<T>|ArrayViewInterface<T> $source
-     * @param bool|null $readonly
-     * @throws ReadonlyError
+     * Constructor to create a new ArrayView.
+     *
+     * @param array<T>|ArrayViewInterface<T> $source The source array or view.
+     * @param bool|null $readonly Flag indicating if the view is readonly.
+     *
+     * @throws ValueError if the array is not sequential.
+     * @throws ReadonlyError if the source is readonly and trying to create a non-readonly view.
      */
     public function __construct(&$source, ?bool $readonly = null)
     {
-        if (is_array($source) && !Util::isArraySequential($source)) {
-            throw new ValueError('Cannot create view for non-sequential array.');
-        }
+        $this->checkSequential($source);
 
         $this->source = &$source;
         $this->readonly = $readonly ?? (($source instanceof ArrayViewInterface) ? $source->isReadonly() : false);
@@ -147,6 +152,8 @@ class ArrayView implements ArrayViewInterface
      */
     public function applyWith($data, callable $mapper): self
     {
+        $this->checkSequential($data);
+
         [$dataSize, $thisSize] = [\count($data), \count($this)];
         if ($dataSize !== $thisSize) {
             throw new SizeError("Length of values array not equal to view length ({$dataSize} != {$thisSize}).");
@@ -169,10 +176,14 @@ class ArrayView implements ArrayViewInterface
     /**
      * {@inheritDoc}
      *
-     * @return ArrayView<T>
+     * @return ArrayView<T> this view.
+     *
+     * @throws SizeError if the length of newValues array is not equal to the length of the view.
      */
     public function set($newValues): self
     {
+        $this->checkSequential($newValues);
+
         if (!\is_array($newValues) && !($newValues instanceof ArrayViewInterface)) {
             $size = \count($this);
             for ($i = 0; $i < $size; $i++) {
@@ -226,7 +237,9 @@ class ArrayView implements ArrayViewInterface
     }
 
     /**
-     * @return int
+     * Get the size of the parent view or source array.
+     *
+     * @return int The size of the parent view or source array.
      */
     protected function getParentSize(): int
     {
@@ -236,8 +249,32 @@ class ArrayView implements ArrayViewInterface
     }
 
     /**
-     * @param int $i
-     * @return int
+     * Check if the given source array is sequential (indexed from 0 to n-1).
+     *
+     * If the array is not sequential, a ValueError is thrown indicating that
+     * a view cannot be created for a non-sequential array.
+     *
+     * @param mixed $source The source array to check for sequential indexing.
+     *
+     * @return void
+     *
+     * @throws ValueError if the source array is not sequential.
+     */
+    protected function checkSequential($source): void
+    {
+        if (is_array($source) && !Util::isArraySequential($source)) {
+            throw new ValueError('Cannot create view for non-sequential array.');
+        }
+    }
+
+    /**
+     * Convert the given index to a valid index within the source array.
+     *
+     * @param int $i The index to convert.
+     *
+     * @return int The converted index within the source array.
+     *
+     * @throws IndexError if the index is out of range and $throwError is true.
      */
     protected function convertIndex(int $i): int
     {
@@ -245,8 +282,11 @@ class ArrayView implements ArrayViewInterface
     }
 
     /**
-     * @param numeric $offset
-     * @return bool
+     * Check if a numeric offset exists in the source array.
+     *
+     * @param numeric $offset The numeric offset to check.
+     *
+     * @return bool Returns true if the numeric offset exists in the source, false otherwise.
      */
     private function numericOffsetExists($offset): bool
     {

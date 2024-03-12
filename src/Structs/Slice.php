@@ -9,29 +9,35 @@ use Smoren\ArrayView\Exceptions\ValueError;
 use Smoren\ArrayView\Util;
 
 /**
- * @property-read int|null $start
- * @property-read int|null $end
- * @property-read int|null $step
+ * Represents a slice definition for selecting a range of elements.
+ *
+ * @property-read int|null $start The start index of the slice range.
+ * @property-read int|null $end The end index of the slice range.
+ * @property-read int|null $step The step size for selecting elements in the slice range.
  */
 class Slice
 {
     /**
-     * @var int|null
+     * @var int|null The start index of the slice range.
      */
     public ?int $start;
     /**
-     * @var int|null
+     * @var int|null The end index of the slice range.
      */
     public ?int $end;
     /**
-     * @var int|null
+     * @var int|null The step size for selecting elements in the slice range.
      */
     public ?int $step;
 
     /**
-     * @param string|Slice|array<int> $s
+     * Converts a slice string or Slice object into a Slice instance.
      *
-     * @return Slice
+     * @param string|Slice|array<int> $s The slice string/array or Slice object to convert.
+     *
+     * @return Slice The converted Slice instance.
+     *
+     * @throws ValueError if the slice representation is invalid.
      */
     public static function toSlice($s): Slice
     {
@@ -56,9 +62,11 @@ class Slice
     }
 
     /**
-     * @param mixed $s
+     * Checks if the provided value is a Slice instance or a valid slice string.
      *
-     * @return bool
+     * @param mixed $s The value to check.
+     *
+     * @return bool True if the value is a Slice instance or a valid slice string, false otherwise.
      */
     public static function isSlice($s): bool
     {
@@ -66,9 +74,11 @@ class Slice
     }
 
     /**
-     * @param mixed $s
+     * Checks if the provided value is a valid slice string.
      *
-     * @return bool
+     * @param mixed $s The value to check.
+     *
+     * @return bool True if the value is a valid slice string, false otherwise.
      */
     public static function isSliceString($s): bool
     {
@@ -90,9 +100,11 @@ class Slice
     }
 
     /**
-     * @param mixed $s
+     * Checks if the provided value is a valid slice array.
      *
-     * @return bool
+     * @param mixed $s The value to check.
+     *
+     * @return bool True if the value is a valid slice array, false otherwise.
      */
     public static function isSliceArray($s): bool
     {
@@ -117,9 +129,11 @@ class Slice
     }
 
     /**
-     * @param int|null $start
-     * @param int|null $end
-     * @param int|null $step
+     * Creates a new Slice instance with optional start, end, and step values.
+     *
+     * @param int|null $start The start index of the slice range.
+     * @param int|null $end The end index of the slice range.
+     * @param int|null $step The step size for selecting elements in the slice range.
      */
     public function __construct(?int $start = null, ?int $end = null, ?int $step = null)
     {
@@ -129,9 +143,13 @@ class Slice
     }
 
     /**
-     * @param int $containerSize
+     * Normalizes the slice parameters based on the container length.
      *
-     * @return NormalizedSlice
+     * @param int $containerSize The length of the container or array.
+     *
+     * @return NormalizedSlice The normalized slice parameters.
+     *
+     * @throws IndexError if the step value is 0.
      */
     public function normalize(int $containerSize): NormalizedSlice
     {
@@ -147,7 +165,9 @@ class Slice
     }
 
     /**
-     * @return string
+     * Returns the string representation of the Slice.
+     *
+     * @return string The string representation of the Slice.
      */
     public function toString(): string
     {
@@ -156,8 +176,11 @@ class Slice
     }
 
     /**
-     * @param string $s
-     * @return array<int|null>
+     * Parses a slice string into an array of start, end, and step values.
+     *
+     * @param string $s The slice string to parse.
+     *
+     * @return array<int|null> An array of parsed start, end, and step values.
      */
     private static function parseSliceString(string $s): array
     {
@@ -168,16 +191,27 @@ class Slice
     }
 
     /**
-     * @param int $x
-     * @param int $min
-     * @param int $max
-     * @return int
+     * Constrains a value within a given range.
+     *
+     * @param int $x The value to constrain.
+     * @param int $min The minimum allowed value.
+     * @param int $max The maximum allowed value.
+     *
+     * @return int The constrained value.
      */
     private function squeezeInBounds(int $x, int $min, int $max): int
     {
         return max($min, min($max, $x));
     }
 
+    /**
+     * Normalizes the slice parameters based on the container length (for positive step only).
+     *
+     * @param int $containerSize The length of the container or array.
+     * @param int $step Step size.
+     *
+     * @return NormalizedSlice The normalized slice parameters.
+     */
     private function normalizeWithPositiveStep(int $containerSize, int $step): NormalizedSlice
     {
         $start = $this->start ?? 0;
@@ -202,6 +236,14 @@ class Slice
         return new NormalizedSlice($start, $end, $step);
     }
 
+    /**
+     * Normalizes the slice parameters based on the container length (for negative step only).
+     *
+     * @param int $containerSize The length of the container or array.
+     * @param int $step Step size.
+     *
+     * @return NormalizedSlice The normalized slice parameters.
+     */
     private function normalizeWithNegativeStep(int $containerSize, int $step): NormalizedSlice
     {
         $start = $this->start ?? $containerSize - 1;

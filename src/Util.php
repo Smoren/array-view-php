@@ -7,16 +7,22 @@ namespace Smoren\ArrayView;
 use Smoren\ArrayView\Exceptions\IndexError;
 
 /**
+ * Utility class containing static helper methods for array manipulation and index normalization.
+ *
  * @internal
  */
 class Util
 {
     /**
-     * @param int $index
-     * @param int $containerLength
-     * @param bool $throwError
+     * Normalize a given index within the range of the container length.
      *
-     * @return int
+     * @param int $index The index to normalize.
+     * @param int $containerLength The length of the container.
+     * @param bool $throwError Flag to indicate if an IndexError should be thrown for out-of-range index.
+     *
+     * @return int The normalized index within the valid range of the container.
+     *
+     * @throws IndexError if the index is out of range and $throwError is true.
      */
     public static function normalizeIndex(int $index, int $containerLength, bool $throwError = true): int
     {
@@ -28,9 +34,11 @@ class Util
     }
 
     /**
-     * @param array<mixed> $source
+     * Check if an array is sequential (indexed from 0 to n-1).
      *
-     * @return bool
+     * @param array<mixed> $source The array to check for sequential indexing.
+     *
+     * @return bool Returns true if the array has sequential indexing, false otherwise.
      */
     public static function isArraySequential(array $source): bool
     {
