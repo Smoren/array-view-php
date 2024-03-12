@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Smoren\ArrayView\Selectors;
 
 use Smoren\ArrayView\Interfaces\ArraySelectorInterface;
