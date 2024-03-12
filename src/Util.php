@@ -37,7 +37,7 @@ class Util
      * Check if an array is sequential (indexed from 0 to n-1).
      *
      * @param array<mixed> $source The array to check for sequential indexing.
-     * @param bool $forceCustomImplementation Flag only for tests.
+     * @param bool $forceCustomImplementation Flag only for tests (to test custom implementation of array_is_list).
      *
      * @return bool Returns true if the array has sequential indexing, false otherwise.
      */
