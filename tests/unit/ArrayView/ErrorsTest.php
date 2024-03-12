@@ -210,6 +210,33 @@ class ErrorsTest extends \Codeception\Test\Unit
         ArrayView::toView($nonSequentialArray);
     }
 
+    /**
+     * @dataProvider dataProviderForBadIndexList
+     */
+    public function testReadBadIndexList(array $source, array $indexes)
+    {
+        $view = ArrayView::toView($source);
+        $this->expectException(IndexError::class);
+        $this->expectExceptionMessage('Some indexes are out of range.');
+        $_ = $view[new IndexListSelector($indexes)];
+    }
+
+    /**
+     * @dataProvider dataProviderForBadIndexList
+     */
+    public function testWriteBadIndexList(array $source, array $indexes)
+    {
+        $initialSource = [...$source];
+        $view = ArrayView::toView($source);
+
+        try {
+            $view[new IndexListSelector($indexes)] = $indexes;
+        } catch (IndexError $e) {
+            $this->assertSame($initialSource, [...$view]);
+            $this->assertSame('Some indexes are out of range.', $e->getMessage());
+        }
+    }
+
     public function dataProviderForOutOfRangeIndexes(): array
     {
         return [
@@ -376,6 +403,25 @@ class ErrorsTest extends \Codeception\Test\Unit
             [[1, 2, 3], new SliceSelector('0:2')],
             [[1, 2, 3], new MaskSelector([0, 1])],
             [[1, 2, 3], new IndexListSelector([0, 1])],
+        ];
+    }
+
+    public function dataProviderForBadIndexList(): array
+    {
+        return [
+            [[1], [0, 1]],
+            [[1], [1, -1, -2]],
+            [[1], [0, 1, 0, -1, -2]],
+            [[1], [1, -1]],
+            [[1], [0, 0, -2]],
+            [[1, 2], [2]],
+            [[1, 2], [1, 2]],
+            [[1, 2], [0, 1, 2]],
+            [[1, 2, 3, 4, 5, 6, 7, 8, 9], [1, 3, 5, -10]],
+            [[1, 2, 3, 4, 5, 6, 7, 8, 9], [9, 5, 3, 1]],
+            [[1, 2, 3, 4, 5, 6, 7, 8, 9], [1, 10, 9, 7]],
+            [[1, 2, 3, 4, 5, 6, 7, 8, 9], [-10, 1, 7, 10]],
+            [[1, 2, 3, 4, 5, 6, 7, 8, 9], [1, 1, 50, 5, 3]],
         ];
     }
 

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Smoren\ArrayView\Selectors;
 
+use Smoren\ArrayView\Exceptions\IndexError;
 use Smoren\ArrayView\Interfaces\ArrayViewInterface;
 use Smoren\ArrayView\Interfaces\IndexListSelectorInterface;
 use Smoren\ArrayView\Views\ArrayIndexListView;
@@ -42,6 +43,10 @@ final class IndexListSelector implements IndexListSelectorInterface
      */
     public function select(ArrayViewInterface $source, ?bool $readonly = null): ArrayIndexListView
     {
+        if (!$this->compatibleWith($source)) {
+            throw new IndexError('Some indexes are out of range.');
+        }
+
         return new ArrayIndexListView($source, $this->value, $readonly ?? $source->isReadonly());
     }
 
