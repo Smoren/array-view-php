@@ -38,7 +38,8 @@ class Slice
         }
 
         if (!self::isSliceString($s)) {
-            throw new ValueError("Invalid slice: \"{$s}\".");
+            $str = \is_scalar($s) ? "{$s}" : gettype($s);
+            throw new ValueError("Invalid slice: \"{$str}\".");
         }
 
         $slice = self::parseSliceString($s);
@@ -81,6 +82,33 @@ class Slice
     }
 
     /**
+     * @param mixed $s
+     *
+     * @return bool
+     */
+    public static function isSliceArray($s): bool
+    {
+        if (!\is_array($s)) {
+            return false;
+        }
+
+        if (!(\count($s) >= 0 && \count($s) <= 3)) {
+            return false;
+        }
+
+        foreach ($s as $key => $item) {
+            if (\is_string($key)) {
+                return false;
+            }
+            if ($item !== null && (!\is_numeric($item) || \is_float($item + 0))) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
      * @param int|null $start
      * @param int|null $end
      * @param int|null $step
@@ -93,11 +121,11 @@ class Slice
     }
 
     /**
-     * @param int $containerLength
+     * @param int $containerSize
      *
      * @return NormalizedSlice
      */
-    public function normalize(int $containerLength): NormalizedSlice
+    public function normalize(int $containerSize): NormalizedSlice
     {
         // TODO: Need refactor
         $step = $this->step ?? 1;
@@ -108,25 +136,25 @@ class Slice
 
         $defaultEnd = ($step < 0 && $this->end === null) ? -1 : null;
 
-        $start = $this->start ?? ($step > 0 ? 0 : $containerLength - 1);
-        $end = $this->end ?? ($step > 0 ? $containerLength : -1);
+        $start = $this->start ?? ($step > 0 ? 0 : $containerSize - 1);
+        $end = $this->end ?? ($step > 0 ? $containerSize : -1);
 
         $start = intval(round($start));
         $end = intval(round($end));
         $step = intval(round($step));
 
-        $start = Util::normalizeIndex($start, $containerLength, false);
-        $end = Util::normalizeIndex($end, $containerLength, false);
+        $start = Util::normalizeIndex($start, $containerSize, false);
+        $end = Util::normalizeIndex($end, $containerSize, false);
 
-        if ($step > 0 && $start >= $containerLength) {
-            $start = $end = $containerLength - 1;
+        if ($step > 0 && $start >= $containerSize) {
+            $start = $end = $containerSize - 1;
         } elseif ($step < 0 && $start < 0) {
             $start = $end = 0;
             $defaultEnd = 0;
         }
 
-        $start = $this->squeezeInBounds($start, 0, $containerLength - 1);
-        $end = $this->squeezeInBounds($end, $step > 0 ? 0 : -1, $containerLength);
+        $start = $this->squeezeInBounds($start, 0, $containerSize - 1);
+        $end = $this->squeezeInBounds($end, $step > 0 ? 0 : -1, $containerSize);
 
         if (($step > 0 && $end < $start) || ($step < 0 && $end > $start)) {
             $end = $start;
@@ -150,6 +178,9 @@ class Slice
      */
     private static function parseSliceString(string $s): array
     {
+        if ($s === '') {
+            return [];
+        }
         return array_map(fn($x) => trim($x) === '' ? null : \intval(trim($x)), \explode(':', $s));
     }
 
