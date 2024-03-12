@@ -108,7 +108,7 @@ composer test
 ```
 
 ## Contributing
-Contributions are welcome! Feel free to open an issue or submit a pull request on the [GitHub repository](https://github.com/Smoren/array-view-ts).
+Contributions are welcome! Feel free to open an issue or submit a pull request on the [GitHub repository](https://github.com/Smoren/array-view-php).
 
 ## Standards
 ArrayView conforms to the following standards:
