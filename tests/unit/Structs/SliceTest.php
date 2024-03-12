@@ -48,9 +48,9 @@ class SliceTest extends \Codeception\Test\Unit
         $actual = Slice::toSlice($input);
         $expectedSlice = new Slice(...$expected);
 
-        $this->assertSame($expectedSlice->start, $actual->start);
-        $this->assertSame($expectedSlice->end, $actual->end);
-        $this->assertSame($expectedSlice->step, $actual->step);
+        $this->assertSame($expectedSlice->getStart(), $actual->getStart());
+        $this->assertSame($expectedSlice->getEnd(), $actual->getEnd());
+        $this->assertSame($expectedSlice->getStep(), $actual->getStep());
     }
 
     /**

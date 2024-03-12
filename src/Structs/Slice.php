@@ -10,25 +10,21 @@ use Smoren\ArrayView\Util;
 
 /**
  * Represents a slice definition for selecting a range of elements.
- *
- * @property-read int|null $start The start index of the slice range.
- * @property-read int|null $end The end index of the slice range.
- * @property-read int|null $step The step size for selecting elements in the slice range.
  */
 class Slice
 {
     /**
      * @var int|null The start index of the slice range.
      */
-    public ?int $start;
+    protected ?int $start;
     /**
      * @var int|null The end index of the slice range.
      */
-    public ?int $end;
+    protected ?int $end;
     /**
      * @var int|null The step size for selecting elements in the slice range.
      */
-    public ?int $step;
+    protected ?int $step;
 
     /**
      * Converts a slice string or Slice object into a Slice instance.
@@ -140,6 +136,36 @@ class Slice
         $this->start = $start;
         $this->end = $end;
         $this->step = $step;
+    }
+
+    /**
+     * Getter for the start index of the normalized slice.
+     *
+     * @return int|null
+     */
+    public function getStart(): ?int
+    {
+        return $this->start;
+    }
+
+    /**
+     * Getter for the stop index of the normalized slice.
+     *
+     * @return int|null
+     */
+    public function getEnd(): ?int
+    {
+        return $this->end;
+    }
+
+    /**
+     * Getter for the step of the normalized slice.
+     *
+     * @return int|null
+     */
+    public function getStep(): ?int
+    {
+        return $this->step;
     }
 
     /**
