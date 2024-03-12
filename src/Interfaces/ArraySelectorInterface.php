@@ -22,6 +22,17 @@ interface ArraySelectorInterface
     public function select(ArrayViewInterface $source, ?bool $readonly = null): ArrayViewInterface;
 
     /**
+     * Checks if the selector is compatible with the given view.
+     *
+     * @template T View elements type.
+     *
+     * @param ArrayViewInterface<T> $view the view to check compatibility with.
+     *
+     * @return bool true if the element is compatible, false otherwise
+     */
+    public function compatibleWith(ArrayViewInterface $view): bool;
+
+    /**
      * Return value of the selector.
      *
      * @return mixed

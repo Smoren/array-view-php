@@ -42,7 +42,7 @@ trait ArrayViewAccessTrait
         }
 
         if ($offset instanceof ArraySelectorInterface) {
-            return true;
+            return $offset->compatibleWith($this);
         }
 
         return false;
