@@ -4,8 +4,10 @@ namespace Smoren\ArrayView\Tests\Unit\ArrayView;
 
 use Smoren\ArrayView\Exceptions\IndexError;
 use Smoren\ArrayView\Exceptions\KeyError;
+use Smoren\ArrayView\Exceptions\NotSupportedError;
 use Smoren\ArrayView\Exceptions\SizeError;
 use Smoren\ArrayView\Exceptions\ValueError;
+use Smoren\ArrayView\Selectors\IndexListSelector;
 use Smoren\ArrayView\Selectors\MaskSelector;
 use Smoren\ArrayView\Selectors\SliceSelector;
 use Smoren\ArrayView\Views\ArrayView;
@@ -187,6 +189,18 @@ class ErrorsTest extends \Codeception\Test\Unit
     }
 
     /**
+     * @dataProvider dataProviderForUnsetError
+     */
+    public function testUnsetError(array $source, $index)
+    {
+        $view = ArrayView::toView($source);
+
+        $this->expectException(NotSupportedError::class);
+
+        unset($view[$index]);
+    }
+
+    /**
      * @dataProvider dataProviderForNonSequentialError
      */
     public function testNonSequentialError(callable $arrayGetter)
@@ -324,6 +338,44 @@ class ErrorsTest extends \Codeception\Test\Unit
                 fn (array &$source) => ArrayView::toView($source),
                 [1, 2, 3, 4, 5],
             ],
+        ];
+    }
+
+    public function dataProviderForUnsetError(): array
+    {
+        return [
+            [[], 0],
+            [[], 1],
+            [[], -1],
+            [[], null],
+            [[], true],
+            [[], false],
+            [[], []],
+            [[], [1, 2, 3]],
+            [[], ['test' => 123]],
+            [[], new \ArrayObject([1, 2, 3])],
+            [[], INF],
+            [[], -INF],
+            [[], NAN],
+            [[], new SliceSelector('0:2')],
+            [[], new MaskSelector([0, 1])],
+            [[], new IndexListSelector([0, 1])],
+            [[1, 2, 3], 0],
+            [[1, 2, 3], 1],
+            [[1, 2, 3], -1],
+            [[1, 2, 3], null],
+            [[1, 2, 3], true],
+            [[1, 2, 3], false],
+            [[1, 2, 3], []],
+            [[1, 2, 3], [1, 2, 3]],
+            [[1, 2, 3], ['test' => 123]],
+            [[1, 2, 3], new \ArrayObject([1, 2, 3])],
+            [[1, 2, 3], INF],
+            [[1, 2, 3], -INF],
+            [[1, 2, 3], NAN],
+            [[1, 2, 3], new SliceSelector('0:2')],
+            [[1, 2, 3], new MaskSelector([0, 1])],
+            [[1, 2, 3], new IndexListSelector([0, 1])],
         ];
     }
 
