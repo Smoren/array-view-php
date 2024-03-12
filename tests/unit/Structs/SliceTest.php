@@ -34,7 +34,7 @@ class SliceTest extends \Codeception\Test\Unit
     public function testSliceError($input)
     {
         $this->expectException(ValueError::class);
-        $strInput = \is_scalar($input) ? "{$input}" : gettype($input);
+        $strInput = \is_scalar($input) ? "{$input}" : \gettype($input);
         $this->expectExceptionMessage("Invalid slice: \"{$strInput}\"");
 
         Slice::toSlice($input);
