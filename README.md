@@ -30,17 +30,17 @@ composer require smoren/array-view
 use Smoren\ArrayView\Views\ArrayView;
 
 $originalArray = [1, 2, 3, 4, 5, 6, 7, 8, 9];
-$originalView = ArrayView::toView($originalArray);
+$view = ArrayView::toView($originalArray);
 
-$originalView['1:7:2']; // [2, 4, 6]
-$originalView[':3']; // [1, 2, 3]
-$originalView['::-1']; // [9, 8, 7, 6, 5, 4, 3, 2, 1]
+$view['1:7:2']; // [2, 4, 6]
+$view[':3']; // [1, 2, 3]
+$view['::-1']; // [9, 8, 7, 6, 5, 4, 3, 2, 1]
 
-$originalView[2]; // 3
-$originalView[4]; // 5
+$view[2]; // 3
+$view[4]; // 5
 
-$originalView['1:7:2'] = [22, 44, 66];
-print_r($originalView); // [1, 22, 3, 44, 5, 66, 7, 8, 9]
+$view['1:7:2'] = [22, 44, 66];
+print_r($view); // [1, 22, 3, 44, 5, 66, 7, 8, 9]
 ```
 
 ### Subviews
@@ -51,14 +51,14 @@ use Smoren\ArrayView\Selectors\SliceSelector;
 use Smoren\ArrayView\Views\ArrayView;
 
 $originalArray = [1, 2, 3, 4, 5];
-$originalView = ArrayView::toView($originalArray);
+$view = ArrayView::toView($originalArray);
 
-$originalView.subview(new MaskSelector([true, false, true, false, true])).toArray(); // [1, 3, 5]
-$originalView.subview(new IndexListSelector([1, 2, 4])).toArray(); // [2, 3, 5]
-$originalView.subview(new SliceSelector('::-1')).toArray(); // [5, 4, 3, 2, 1]
-$originalView.subview('::-1').toArray(); // [5, 4, 3, 2, 1]
+$view->subview(new MaskSelector([true, false, true, false, true])).toArray(); // [1, 3, 5]
+$view->subview(new IndexListSelector([1, 2, 4])).toArray(); // [2, 3, 5]
+$view->subview(new SliceSelector('::-1')).toArray(); // [5, 4, 3, 2, 1]
+$view->subview('::-1').toArray(); // [5, 4, 3, 2, 1]
 
-$originalView.subview(new MaskSelector([true, false, true, false, true])).apply(fn ($x) => x * 10);
+$view->subview(new MaskSelector([true, false, true, false, true])).apply(fn ($x) => x * 10);
 print_r($originalArray); // [10, 2, 30, 4, 50]
 ```
 
@@ -70,14 +70,14 @@ use Smoren\ArrayView\Selectors\SliceSelector;
 use Smoren\ArrayView\Views\ArrayView;
 
 $originalArray = [1, 2, 3, 4, 5];
-$originalView = ArrayView::toView($originalArray);
+$view = ArrayView::toView($originalArray);
 
-$originalView[new MaskSelector([true, false, true, false, true])]; // [1, 3, 5]
-$originalView[new IndexListSelector([1, 2, 4])]; // [2, 3, 5]
-$originalView[new SliceSelector('::-1')]; // [5, 4, 3, 2, 1]
-$originalView['::-1']; // [5, 4, 3, 2, 1]
+$view[new MaskSelector([true, false, true, false, true])]; // [1, 3, 5]
+$view[new IndexListSelector([1, 2, 4])]; // [2, 3, 5]
+$view[new SliceSelector('::-1')]; // [5, 4, 3, 2, 1]
+$view['::-1']; // [5, 4, 3, 2, 1]
 
-$originalView[new MaskSelector([true, false, true, false, true])] = [10, 30, 50];
+$view[new MaskSelector([true, false, true, false, true])] = [10, 30, 50];
 print_r($originalArray); // [10, 2, 30, 4, 50]
 ```
 
