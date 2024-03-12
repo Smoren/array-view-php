@@ -33,6 +33,7 @@ class Slice
      */
     public static function toSlice($s): Slice
     {
+        /** @var mixed $s */
         if ($s instanceof Slice) {
             return $s;
         }
@@ -42,6 +43,7 @@ class Slice
             throw new ValueError("Invalid slice: \"{$str}\".");
         }
 
+        /** @var string $s */
         $slice = self::parseSliceString($s);
 
         return new Slice(...$slice);
@@ -92,7 +94,7 @@ class Slice
             return false;
         }
 
-        if (!(\count($s) >= 0 && \count($s) <= 3)) {
+        if (\count($s) > 3) {
             return false;
         }
 
