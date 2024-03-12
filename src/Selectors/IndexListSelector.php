@@ -46,6 +46,22 @@ final class IndexListSelector implements IndexListSelectorInterface
     }
 
     /**
+     * Checks if the selector is compatible with the given view.
+     *
+     * @template T View elements type.
+     *
+     * @param ArrayViewInterface<T> $view the view to check compatibility with.
+     *
+     * @return bool true if the element is compatible, false otherwise
+     *
+     * {@inheritDoc}
+     */
+    public function compatibleWith(ArrayViewInterface $view): bool
+    {
+        return \count($this->value) === 0 || \max($this->value) < \count($view) && \min($this->value) >= -\count($view);
+    }
+
+    /**
      * {@inheritDoc}
      */
     public function getValue(): array

@@ -43,6 +43,22 @@ class SliceSelector extends Slice implements ArraySelectorInterface
     }
 
     /**
+     * Checks if the selector is compatible with the given view.
+     *
+     * @template T View elements type.
+     *
+     * @param ArrayViewInterface<T> $view the view to check compatibility with.
+     *
+     * @return bool true if the element is compatible, false otherwise
+     *
+     * {@inheritDoc}
+     */
+    public function compatibleWith(ArrayViewInterface $view): bool
+    {
+        return true;
+    }
+
+    /**
      * {@inheritDoc}
      */
     public function getValue(): Slice
