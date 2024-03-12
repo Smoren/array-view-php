@@ -9,27 +9,10 @@ use Smoren\ArrayView\Util;
 /**
  * Represents a normalized slice definition with start, end, and step values.
  *
- * @property-read int $start The start index of the normalized slice.
- * @property-read int $end The end index of the normalized slice.
- * @property-read int $step The step size for selecting elements in the normalized slice.
- *
  * @implements \IteratorAggregate<int, int>
  */
 class NormalizedSlice extends Slice implements \Countable, \IteratorAggregate
 {
-    /**
-     * @var int|null The start index of the normalized slice.
-     */
-    public ?int $start; // TODO int, not int|null, but phpstan do not like it.
-    /**
-     * @var int|null The end index of the normalized slice.
-     */
-    public ?int $end;
-    /**
-     * @var int|null The step size for selecting elements in the normalized slice.
-     */
-    public ?int $step;
-
     /**
      * Creates a new NormalizedSlice instance with optional start, end, and step values.
      *
@@ -40,6 +23,39 @@ class NormalizedSlice extends Slice implements \Countable, \IteratorAggregate
     public function __construct(int $start = null, int $end = null, int $step = null)
     {
         parent::__construct($start, $end, $step);
+    }
+
+    /**
+     * Getter for the start index of the normalized slice.
+     *
+     * @return int
+     */
+    public function getStart(): int
+    {
+        /** @var int */
+        return $this->start;
+    }
+
+    /**
+     * Getter for the stop index of the normalized slice.
+     *
+     * @return int
+     */
+    public function getEnd(): int
+    {
+        /** @var int */
+        return $this->end;
+    }
+
+    /**
+     * Getter for the step of the normalized slice.
+     *
+     * @return int
+     */
+    public function getStep(): int
+    {
+        /** @var int */
+        return $this->step;
     }
 
     /**
