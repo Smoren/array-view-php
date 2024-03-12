@@ -14,12 +14,18 @@ use Smoren\ArrayView\Selectors\SliceSelector;
 use Smoren\ArrayView\Structs\Slice;
 
 /**
- * @template T
+ * Trait providing methods for accessing elements in ArrayView object.
+ * The trait implements methods for accessing, retrieving, setting,
+ * and unsetting elements in the ArrayView object.
+ *
+ * @template T Type of ArrayView values.
  */
 trait ArrayViewAccessTrait
 {
     /**
-     * @param numeric|string|ArraySelectorInterface $offset
+     * Check if the specified offset exists in the ArrayView object.
+     *
+     * @param numeric|string|ArraySelectorInterface $offset The offset to check.
      *
      * @return bool
      *
@@ -43,9 +49,14 @@ trait ArrayViewAccessTrait
     }
 
     /**
-     * @param numeric|string|ArraySelectorInterface $offset
+     * Get the value at the specified offset in the ArrayView object.
      *
-     * @return T|array<T>
+     * @param numeric|string|ArraySelectorInterface $offset The offset to get the value from.
+     *
+     * @return T|array<T> The value at the specified offset.
+     *
+     * @throws IndexError if the offset is out of range.
+     * @throws KeyError if the key is invalid.
      *
      * {@inheritDoc}
      */
@@ -73,10 +84,16 @@ trait ArrayViewAccessTrait
     }
 
     /**
-     * @param numeric|string|ArraySelectorInterface $offset
-     * @param T|array<T>|ArrayViewInterface<T> $value
+     * Set the value at the specified offset in the ArrayView object.
+     *
+     * @param numeric|string|ArraySelectorInterface $offset The offset to set the value at.
+     * @param T|array<T>|ArrayViewInterface<T> $value The value to set.
      *
      * @return void
+     *
+     * @throws IndexError if the offset is out of range.
+     * @throws KeyError if the key is invalid.
+     * @throws ReadonlyError if the object is readonly.
      *
      * {@inheritDoc}
      */
@@ -113,11 +130,13 @@ trait ArrayViewAccessTrait
     }
 
     /**
-     * @param numeric|string|ArraySelectorInterface $offset
+     * Unset the value at the specified offset in the array-like object.
+     *
+     * @param numeric|string|ArraySelectorInterface $offset The offset to unset the value at.
      *
      * @return void
      *
-     * @throws NotSupportedError
+     * @throws NotSupportedError always.
      *
      * {@inheritDoc}
      */

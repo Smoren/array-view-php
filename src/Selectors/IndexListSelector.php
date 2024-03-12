@@ -8,15 +8,20 @@ use Smoren\ArrayView\Interfaces\ArrayViewInterface;
 use Smoren\ArrayView\Interfaces\IndexListSelectorInterface;
 use Smoren\ArrayView\Views\ArrayIndexListView;
 
+/**
+ * Represents an index list selector that selects elements based on the provided array of indexes.
+ */
 final class IndexListSelector implements IndexListSelectorInterface
 {
     /**
-     * @var array<int>
+     * @var array<int> The array of indexes to select elements from.
      */
     private array $value;
 
     /**
-     * @param array<int>|ArrayViewInterface<int> $value
+     * Creates a new IndexListSelector instance with the provided array of indexes.
+     *
+     * @param array<int>|ArrayViewInterface<int> $value The array of indexes or array view containing indexes.
      */
     public function __construct($value)
     {
@@ -24,12 +29,14 @@ final class IndexListSelector implements IndexListSelectorInterface
     }
 
     /**
-     * @template T
+     * Selects elements from the source array based on the index list.
      *
-     * @param ArrayViewInterface<T> $source
-     * @param bool|null $readonly
+     * @template T The type of elements in the source array view.
      *
-     * @return ArrayIndexListView<T>
+     * @param ArrayViewInterface<T> $source The source array view to select elements from.
+     * @param bool|null $readonly Whether the selection should be read-only.
+     *
+     * @return ArrayIndexListView<T> The view containing the selected elements.
      *
      * {@inheritDoc}
      */

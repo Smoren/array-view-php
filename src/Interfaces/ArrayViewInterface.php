@@ -4,6 +4,13 @@ declare(strict_types=1);
 
 namespace Smoren\ArrayView\Interfaces;
 
+use Smoren\ArrayView\Exceptions\IndexError;
+use Smoren\ArrayView\Exceptions\KeyError;
+use Smoren\ArrayView\Exceptions\NotSupportedError;
+use Smoren\ArrayView\Exceptions\ReadonlyError;
+use Smoren\ArrayView\Exceptions\SizeError;
+use Smoren\ArrayView\Exceptions\ValueError;
+
 /**
  * Interface for a view of an array with additional methods
  * for filtering, mapping, and transforming the data.
@@ -27,6 +34,9 @@ interface ArrayViewInterface extends \ArrayAccess, \IteratorAggregate, \Countabl
      * @param bool|null $readonly Optional flag to indicate whether the view should be readonly.
      *
      * @return ArrayViewInterface<T> An ArrayView instance based on the source array or ArrayView.
+     *
+     * @throws ValueError if the array is not sequential.
+     * @throws ReadonlyError if the source is readonly and trying to create a non-readonly view.
      */
     public static function toView(&$source, ?bool $readonly = null): ArrayViewInterface;
 
@@ -42,6 +52,9 @@ interface ArrayViewInterface extends \ArrayAccess, \IteratorAggregate, \Countabl
      * @param bool|null $readonly Optional flag to indicate whether the view should be readonly.
      *
      * @return ArrayViewInterface<T> An ArrayView instance based on the source array or ArrayView.
+     *
+     * @throws ValueError if the array is not sequential.
+     * @throws ReadonlyError if the source is readonly and trying to create a non-readonly view.
      */
     public static function toUnlinkedView($source, ?bool $readonly = null): ArrayViewInterface;
 
@@ -98,6 +111,9 @@ interface ArrayViewInterface extends \ArrayAccess, \IteratorAggregate, \Countabl
      * @param callable(T, U, int): T $mapper Function to transform each pair of elements.
      *
      * @return ArrayViewInterface<T> this view.
+     *
+     * @throws ValueError if the $data is not sequential array.
+     * @throws SizeError if size of $data not equals to size of the view.
      */
     public function applyWith($data, callable $mapper): self;
 
@@ -107,6 +123,9 @@ interface ArrayViewInterface extends \ArrayAccess, \IteratorAggregate, \Countabl
      * @param array<T>|ArrayViewInterface<T>|T $newValues The new values to set.
      *
      * @return ArrayViewInterface<T> this view.
+     *
+     * @throws ValueError if the $newValues is not sequential array.
+     * @throws SizeError if size of $newValues not equals to size of the view.
      */
     public function set($newValues): self;
 
@@ -138,6 +157,9 @@ interface ArrayViewInterface extends \ArrayAccess, \IteratorAggregate, \Countabl
      *
      * @return T|array<T>
      *
+     * @throws IndexError if the offset is out of range.
+     * @throws KeyError if the key is invalid.
+     *
      * {@inheritDoc}
      */
     #[\ReturnTypeWillChange]
@@ -149,6 +171,10 @@ interface ArrayViewInterface extends \ArrayAccess, \IteratorAggregate, \Countabl
      *
      * @return void
      *
+     * @throws IndexError if the offset is out of range.
+     * @throws KeyError if the key is invalid.
+     * @throws ReadonlyError if the object is readonly.
+     *
      * {@inheritDoc}
      */
     public function offsetSet($offset, $value): void;
@@ -157,6 +183,8 @@ interface ArrayViewInterface extends \ArrayAccess, \IteratorAggregate, \Countabl
      * @param numeric|string|ArraySelectorInterface $offset
      *
      * @return void
+     *
+     * @throws NotSupportedError always.
      *
      * {@inheritDoc}
      */
