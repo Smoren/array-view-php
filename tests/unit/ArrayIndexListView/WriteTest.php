@@ -3,7 +3,6 @@
 namespace Smoren\ArrayView\Tests\Unit\ArrayIndexListView;
 
 use Smoren\ArrayView\Selectors\IndexListSelector;
-use Smoren\ArrayView\Selectors\MaskSelector;
 use Smoren\ArrayView\Views\ArrayView;
 
 class WriteTest extends \Codeception\Test\Unit
