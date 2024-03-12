@@ -60,7 +60,7 @@ class Slice
      */
     public static function isSlice($s): bool
     {
-        return ($s instanceof Slice) || static::isSliceString($s);
+        return ($s instanceof Slice) || static::isSliceString($s) || static::isSliceArray($s);
     }
 
     /**
