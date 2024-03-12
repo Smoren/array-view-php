@@ -133,40 +133,15 @@ class Slice
      */
     public function normalize(int $containerSize): NormalizedSlice
     {
-        // TODO: Need refactor
         $step = $this->step ?? 1;
 
-        if ($step === 0) {
-            throw new IndexError("Step cannot be 0.");
+        if ($step > 0) {
+            return $this->normalizeWithPositiveStep($containerSize, $step);
+        } elseif ($step < 0) {
+            return $this->normalizeWithNegativeStep($containerSize, $step);
         }
 
-        $defaultEnd = ($step < 0 && $this->end === null) ? -1 : null;
-
-        $start = $this->start ?? ($step > 0 ? 0 : $containerSize - 1);
-        $end = $this->end ?? ($step > 0 ? $containerSize : -1);
-
-        $start = intval(round($start));
-        $end = intval(round($end));
-        $step = intval(round($step));
-
-        $start = Util::normalizeIndex($start, $containerSize, false);
-        $end = Util::normalizeIndex($end, $containerSize, false);
-
-        if ($step > 0 && $start >= $containerSize) {
-            $start = $end = $containerSize - 1;
-        } elseif ($step < 0 && $start < 0) {
-            $start = $end = 0;
-            $defaultEnd = 0;
-        }
-
-        $start = $this->squeezeInBounds($start, 0, $containerSize - 1);
-        $end = $this->squeezeInBounds($end, $step > 0 ? 0 : -1, $containerSize);
-
-        if (($step > 0 && $end < $start) || ($step < 0 && $end > $start)) {
-            $end = $start;
-        }
-
-        return new NormalizedSlice($start, $defaultEnd ?? $end, $step);
+        throw new IndexError("Step cannot be 0.");
     }
 
     /**
@@ -199,5 +174,56 @@ class Slice
     private function squeezeInBounds(int $x, int $min, int $max): int
     {
         return max($min, min($max, $x));
+    }
+
+    private function normalizeWithPositiveStep(int $containerSize, int $step): NormalizedSlice
+    {
+        $start = $this->start ?? 0;
+        $end = $this->end ?? $containerSize;
+
+        [$start, $end, $step] = [\round($start), \round($end), \round($step)];
+
+        $start = Util::normalizeIndex($start, $containerSize, false);
+        $end = Util::normalizeIndex($end, $containerSize, false);
+
+        if ($start >= $containerSize) {
+            $start = $end = $containerSize - 1;
+        }
+
+        $start = $this->squeezeInBounds($start, 0, $containerSize - 1);
+        $end = $this->squeezeInBounds($end, 0, $containerSize);
+
+        if ($end < $start) {
+            $end = $start;
+        }
+
+        return new NormalizedSlice($start, $end, $step);
+    }
+
+    private function normalizeWithNegativeStep(int $containerSize, int $step): NormalizedSlice
+    {
+        $start = $this->start ?? $containerSize - 1;
+        $end = $this->end ?? -1;
+
+        [$start, $end, $step] = [\round($start), \round($end), \round($step)];
+
+        $start = Util::normalizeIndex($start, $containerSize, false);
+
+        if (!($this->end === null)) {
+            $end = Util::normalizeIndex($end, $containerSize, false);
+        }
+
+        if ($start < 0) {
+            $start = $end = 0;
+        }
+
+        $start = $this->squeezeInBounds($start, 0, $containerSize - 1);
+        $end = $this->squeezeInBounds($end, -1, $containerSize);
+
+        if ($end > $start) {
+            $end = $start;
+        }
+
+        return new NormalizedSlice($start, $end, $step);
     }
 }
