@@ -27,7 +27,7 @@ class Slice
     public ?int $step;
 
     /**
-     * @param string|Slice $s
+     * @param string|Slice|array<int> $s
      *
      * @return Slice
      */
@@ -36,6 +36,10 @@ class Slice
         /** @var mixed $s */
         if ($s instanceof Slice) {
             return $s;
+        }
+
+        if (\is_array($s) && self::isSliceArray($s)) {
+            return new Slice(...$s);
         }
 
         if (!self::isSliceString($s)) {

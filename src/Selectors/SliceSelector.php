@@ -10,7 +10,7 @@ use Smoren\ArrayView\Views\ArraySliceView;
 class SliceSelector extends Slice implements ArraySelectorInterface
 {
     /**
-     * @param Slice|string $slice
+     * @param Slice|string|array<int> $slice
      */
     public function __construct($slice)
     {
