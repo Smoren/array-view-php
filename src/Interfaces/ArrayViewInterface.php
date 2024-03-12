@@ -33,10 +33,10 @@ interface ArrayViewInterface extends \ArrayAccess, \IteratorAggregate, \Countabl
     /**
      * Creates an unlinked from source ArrayView instance from the given source array or ArrayView.
      *
-     *  * If the source is not an ArrayView, a new ArrayView is created with the provided source.
-     *  * If the source is an ArrayView and the `readonly` parameter is specified as `true`,
-     *  a new readonly ArrayView is created.
-     *  * If the source is an ArrayView and it is already readonly, the same ArrayView is returned.
+     * * If the source is not an ArrayView, a new ArrayView is created with the provided source.
+     * * If the source is an ArrayView and the `readonly` parameter is specified as `true`,
+     * a new readonly ArrayView is created.
+     * * If the source is an ArrayView and it is already readonly, the same ArrayView is returned.
      *
      * @param array<T>|ArrayViewInterface<T> $source The source array or ArrayView to create a view from.
      * @param bool|null $readonly Optional flag to indicate whether the view should be readonly.
