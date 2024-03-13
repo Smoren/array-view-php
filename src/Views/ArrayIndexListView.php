@@ -14,7 +14,7 @@ use Smoren\ArrayView\Util;
  *
  * Each element in the view is based on the specified indexes.
  *
- * @template T
+ * @template T Type of array view elements.
  *
  * @extends ArrayView<T>
  */
