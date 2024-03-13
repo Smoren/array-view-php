@@ -14,15 +14,13 @@ use Smoren\ArrayView\Structs\Slice;
  * Class representing a slice-based view of an array or another ArrayView
  * for accessing elements within a specified slice range.
  *
- * <code>
+ * <pre>
  *
  * $source = [1, 2, 3, 4, 5];
- *
  * $view = ArrayView::toView($source)->subview(new SliceSelector('::2'));
- *
  * $view->toArray(); // [1, 3, 5]
  *
- * </code>
+ * </pre>
  *
  * @template T
  *
