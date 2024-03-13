@@ -44,7 +44,7 @@ jobs:
         run: composer install --no-interaction
 
       - name: Generate API docs
-        run: docker run --rm -v $(pwd):/data phpdoc/phpdoc:3 --directory ./src --visibility public --target ./phpdoc --template default -v
+        run: docker run --rm -v $(pwd):/data phpdoc/phpdoc:3 --directory ./src --visibility public --target ./phpdoc --template guides -v
 
       - name: Setup Pages
         uses: actions/configure-pages@v4
