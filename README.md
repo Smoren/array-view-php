@@ -100,6 +100,10 @@ $subview[':'] = [55, 77];
 print_r($originalArray); // [1, 2, 3, 4, 55, 6, 77, 8, 9, 10]
 ```
 
+## Documentation
+For detailed documentation and usage examples, please refer to the
+[API documentation](https://smoren.github.io/array-view-php/namespaces/smoren-arrayview.html).
+
 ## Unit testing
 ```
 composer install
