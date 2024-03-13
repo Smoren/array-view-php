@@ -68,7 +68,7 @@
     "stan": ["./vendor/bin/phpstan analyse -l 9 src"],
     "phpdoc": [
       "export COMPOSER_PROCESS_TIMEOUT=9000",
-      "vendor/bin/phpdoc --directory ./src --visibility public --target ./phpdoc -v"
+      "vendor/bin/phpdoc --directory ./src --visibility public --target ./phpdoc --template default -v"
     ]
   }
 }
