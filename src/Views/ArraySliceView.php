@@ -22,7 +22,7 @@ use Smoren\ArrayView\Structs\Slice;
  *
  * </pre>
  *
- * @template T
+ * @template T Type of array source elements.
  *
  * @extends ArrayView<T>
  */

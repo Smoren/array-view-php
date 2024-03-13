@@ -1,8 +1,10 @@
 vendor
 .idea
 .phpdoc
+phpdoc
 tests/_output
 tests/_support/_generated
 composer.lock
 composer.phar
 build
+g

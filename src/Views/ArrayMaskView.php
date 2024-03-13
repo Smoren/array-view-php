@@ -22,7 +22,7 @@ use Smoren\ArrayView\Interfaces\ArrayViewInterface;
  *
  * </pre>
  *
- * @template T
+ * @template T Type of array source elements.
  *
  * @extends ArrayIndexListView<T>
  */

@@ -68,7 +68,7 @@ interface ArrayViewInterface extends \ArrayAccess, \IteratorAggregate, \Countabl
     /**
      * Filters the elements in the view based on a predicate function.
      *
-     * @param callable(T): bool $predicate Function that returns a boolean value for each element.
+     * @param callable(T, int): bool $predicate Function that returns a boolean value for each element.
      *
      * @return ArrayViewInterface<T> A new view with elements that satisfy the predicate.
      */
@@ -77,7 +77,7 @@ interface ArrayViewInterface extends \ArrayAccess, \IteratorAggregate, \Countabl
     /**
      * Checks if all elements in the view satisfy a given predicate function.
      *
-     * @param callable(T): bool $predicate Function that returns a boolean value for each element.
+     * @param callable(T, int): bool $predicate Function that returns a boolean value for each element.
      *
      * @return MaskSelectorInterface Boolean mask for selecting elements that satisfy the predicate.
      */
@@ -90,6 +90,9 @@ interface ArrayViewInterface extends \ArrayAccess, \IteratorAggregate, \Countabl
      * @param bool|null $readonly Flag indicating if the subview should be read-only.
      *
      * @return ArrayViewInterface<T> A new view representing the subview of this view.
+     *
+     * @throws IndexError if the selector is IndexListSelector and some indexes are out of range.
+     * @throws SizeError if the selector is MaskSelector and size of the mask not equals to size of the view.
      */
     public function subview($selector, bool $readonly = null): ArrayViewInterface;
 
