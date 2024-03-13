@@ -17,10 +17,11 @@ use Smoren\ArrayView\Structs\Slice;
  * @template T
  *
  * <code>
- * <?php
  *
  * $source = [1, 2, 3, 4, 5];
+ *
  * $view = ArrayView::toView($source)->subview(new SliceSelector('::2'));
+ *
  * $view->toArray(); // [1, 3, 5]
  *
  * </code>

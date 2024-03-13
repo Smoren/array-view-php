@@ -17,10 +17,11 @@ use Smoren\ArrayView\Util;
  * @template T Type of array source elements.
  *
  * <code>
- * <?php
  *
  * $source = [1, 2, 3, 4, 5];
+ *
  * $view = ArrayView::toView($source)->subview(new IndexListSelector([0, 2, 4]));
+ *
  * $view->toArray(); // [1, 3, 5]
  *
  * </code>
