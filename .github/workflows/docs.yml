@@ -43,8 +43,10 @@ jobs:
       - name: Run Composer
         run: composer install --no-interaction
 
-      - name: Generate Docs
-        run: composer phpdoc
+      - name: Generate API docs
+        uses: phpDocumentor/phpDocumentor@master
+        with:
+          args: --directory ./src --visibility public --target ./phpdoc --template default -v
 
       - name: Setup Pages
         uses: actions/configure-pages@v4
