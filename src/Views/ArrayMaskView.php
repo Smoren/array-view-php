@@ -24,7 +24,7 @@ use Smoren\ArrayView\Interfaces\ArrayViewInterface;
  * $view->toArray(); // [1, 3, 5]
  *
  * </code>
- * 
+ *
  * @extends ArrayIndexListView<T>
  */
 class ArrayMaskView extends ArrayIndexListView
