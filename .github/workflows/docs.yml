@@ -6,13 +6,21 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
 
 jobs:
-  test:
+  deploy:
     name: Deploy docs
     runs-on: ubuntu-latest
-
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - name: Set up PHP
         uses: shivammathur/setup-php@v2
@@ -22,7 +30,7 @@ jobs:
           tools: composer:v2
 
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
@@ -36,11 +44,16 @@ jobs:
         run: composer install --no-interaction
 
       - name: Generate Docs
-        run: |
-          composer phpdoc
+        run: composer phpdoc
 
-      - name: Deploy
-        uses: JamesIves/github-pages-deploy-action@4.1.0
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
         with:
-          branch: docs
-          folder: phpdoc
+          path: './docs'
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
