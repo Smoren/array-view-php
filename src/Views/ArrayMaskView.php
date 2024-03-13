@@ -16,6 +16,15 @@ use Smoren\ArrayView\Interfaces\ArrayViewInterface;
  *
  * @template T
  *
+ * <code>
+ * <?php
+ *
+ * $source = [1, 2, 3, 4, 5];
+ * $view = ArrayView::toView($source)->subview(new MaskSelector([true, false, true, false, true]));
+ * $view->toArray(); // [1, 3, 5]
+ *
+ * </code>
+ * 
  * @extends ArrayIndexListView<T>
  */
 class ArrayMaskView extends ArrayIndexListView
