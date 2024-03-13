@@ -20,10 +20,10 @@ use Smoren\ArrayView\Util;
  * Class representing a view of an array or another array view
  * with additional methods for filtering, mapping, and transforming the data.
  *
- * <pre>
+ * ```php
  * $source = [1, 2, 3, 4, 5];
  * $view = ArrayView::toView($source);
- * </pre>
+ * ```
  *
  * @template T Type of array source elements.
  *
