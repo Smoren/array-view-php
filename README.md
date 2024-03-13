@@ -2,7 +2,7 @@
 ![Packagist PHP Version Support](https://img.shields.io/packagist/php-v/smoren/array-view)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/Smoren/array-view-php/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/Smoren/array-view-php/?branch=master)
 [![Coverage Status](https://coveralls.io/repos/github/Smoren/array-view-php/badge.svg?branch=master)](https://coveralls.io/github/Smoren/array-view-php?branch=master)
-![Build and test](https://github.com/Smoren/array-view-php/actions/workflows/test_master.yml/badge.svg)
+![Build and test](https://github.com/Smoren/array-view-php/actions/workflows/test.yml/badge.svg)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 **Array View** is a PHP library that provides a powerful set of utilities for working with arrays in
