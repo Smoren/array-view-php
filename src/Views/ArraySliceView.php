@@ -14,8 +14,6 @@ use Smoren\ArrayView\Structs\Slice;
  * Class representing a slice-based view of an array or another ArrayView
  * for accessing elements within a specified slice range.
  *
- * @template T
- *
  * <code>
  *
  * $source = [1, 2, 3, 4, 5];
@@ -25,6 +23,8 @@ use Smoren\ArrayView\Structs\Slice;
  * $view->toArray(); // [1, 3, 5]
  *
  * </code>
+ *
+ * @template T
  *
  * @extends ArrayView<T>
  */

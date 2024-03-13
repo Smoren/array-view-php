@@ -14,8 +14,6 @@ use Smoren\ArrayView\Interfaces\ArrayViewInterface;
  *
  * Each element in the view is included or excluded based on the specified boolean mask.
  *
- * @template T
- *
  * <code>
  *
  * $source = [1, 2, 3, 4, 5];
@@ -25,6 +23,8 @@ use Smoren\ArrayView\Interfaces\ArrayViewInterface;
  * $view->toArray(); // [1, 3, 5]
  *
  * </code>
+ *
+ * @template T
  *
  * @extends ArrayIndexListView<T>
  */
