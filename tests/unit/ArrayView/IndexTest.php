@@ -287,7 +287,7 @@ class IndexTest extends \Codeception\Test\Unit
      * @param mixed $i
      * @return void
      */
-    public function testNonIntegerIndexError($i): void
+    public function testNonIntegerKeyError($i): void
     {
         // Given
         $array = [10, 20, 30];
@@ -310,6 +310,39 @@ class IndexTest extends \Codeception\Test\Unit
             ['④'],
             ['V'],
             ['six'],
+        ];
+    }
+
+    /**
+     * @dataProvider dataProviderForFloatIndexes
+     * @param mixed $i
+     * @return void
+     */
+    public function testNonIntegerIndexError($i): void
+    {
+        // Given
+        $array = [10, 20, 30];
+        $arrayView = ArrayView::toView($array);
+
+        // Then
+        $this->expectException(IndexError::class);
+
+        // When
+        $number = $arrayView[$i];
+    }
+
+    public static function dataProviderForFloatIndexes(): array
+    {
+        return [
+            [0.1],
+            ['0.5'],
+            ['1.5'],
+            [2.0],
+            [3.1],
+            ['45.66'],
+            [\NAN],
+            [\INF],
+            [-\INF],
         ];
     }
 }
