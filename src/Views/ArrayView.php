@@ -290,7 +290,13 @@ class ArrayView implements ArrayViewInterface
      */
     private function numericOffsetExists($offset): bool
     {
-        if (!\is_string($offset) && \is_numeric($offset) && (\is_nan($offset) || \is_infinite($offset))) {
+        // Non-string must be integer
+        if (!\is_string($offset) && !\is_int($offset)) {
+            return false;
+        }
+
+        // Numeric string must be 'integer'
+        if (\is_string($offset) && \preg_match('/^-?\d+$/', $offset) !== 1) {
             return false;
         }
 
