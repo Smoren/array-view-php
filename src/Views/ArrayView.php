@@ -32,7 +32,7 @@ use Smoren\ArrayView\Util;
 class ArrayView implements ArrayViewInterface
 {
     /**
-     * @use ArrayViewAccessTrait<T, string|array<mixed>|ArrayViewInterface<mixed>|ArraySelectorInterface>
+     * @use ArrayViewAccessTrait<T, string|array<int|bool>|ArrayViewInterface<int|bool>|ArraySelectorInterface>
      *
      * for array access methods.
      */
@@ -274,7 +274,7 @@ class ArrayView implements ArrayViewInterface
      * $subview[0] = [11]; // throws ReadonlyError
      * ```
      *
-     * @template S of string|array<mixed>|ArrayViewInterface<mixed>|ArraySelectorInterface
+     * @template S of string|array<int|bool>|ArrayViewInterface<int|bool>|ArraySelectorInterface Selector type.
      *
      * @param S $selector The selector or string to filter the subview.
      * @param bool|null $readonly Flag indicating if the subview should be read-only.

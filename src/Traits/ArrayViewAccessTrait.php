@@ -22,7 +22,7 @@ use Smoren\ArrayView\Util;
  * and unsetting elements in the ArrayView object.
  *
  * @template T Type of ArrayView values.
- * @template S of string|array<mixed>|ArrayViewInterface<mixed>|ArraySelectorInterface Type of selectors.
+ * @template S of string|array<int|bool>|ArrayViewInterface<int|bool>|ArraySelectorInterface Selector type.
  */
 trait ArrayViewAccessTrait
 {
@@ -149,9 +149,11 @@ trait ArrayViewAccessTrait
         }
 
         if (\count($input) > 0 && \is_bool($input[0])) {
+            /** @var array<bool> $input */
             return new MaskSelector($input);
         }
 
+        /** @var array<int> $input */
         return new IndexListSelector($input);
     }
 }

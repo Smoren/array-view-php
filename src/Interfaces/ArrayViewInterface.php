@@ -17,7 +17,7 @@ use Smoren\ArrayView\Exceptions\ValueError;
  *
  * @template T The type of elements in the array
  *
- * @extends \ArrayAccess<int|string|array<mixed>|ArrayViewInterface<mixed>|ArraySelectorInterface, T|array<T>>
+ * @extends \ArrayAccess<int|string|array<int|bool>|ArrayViewInterface<int|bool>|ArraySelectorInterface, T|array<T>>
  * @extends \IteratorAggregate<int, T>
  */
 interface ArrayViewInterface extends \ArrayAccess, \IteratorAggregate, \Countable
@@ -86,8 +86,8 @@ interface ArrayViewInterface extends \ArrayAccess, \IteratorAggregate, \Countabl
     /**
      * Returns a subview of this view based on a selector or string slice.
      *
-     * @param string|array<mixed>|ArrayViewInterface<mixed>|ArraySelectorInterface $selector The selector or string
-     * to filter the subview.
+     * @param string|array<int|bool>|ArrayViewInterface<int|bool>|ArraySelectorInterface $selector The selector or
+     * string to filter the subview.
      * @param bool|null $readonly Flag indicating if the subview should be read-only.
      *
      * @return ArrayViewInterface<T> A new view representing the subview of this view.
