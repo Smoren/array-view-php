@@ -56,6 +56,9 @@ $view = ArrayView::toView($originalArray);
 $view->subview(new MaskSelector([true, false, true, false, true])).toArray(); // [1, 3, 5]
 $view->subview(new IndexListSelector([1, 2, 4])).toArray(); // [2, 3, 5]
 $view->subview(new SliceSelector('::-1')).toArray(); // [5, 4, 3, 2, 1]
+
+$view->subview([true, false, true, false, true]).toArray(); // [1, 3, 5]
+$view->subview([1, 2, 4]).toArray(); // [2, 3, 5]
 $view->subview('::-1').toArray(); // [5, 4, 3, 2, 1]
 
 $view->subview(new MaskSelector([true, false, true, false, true])).apply(fn ($x) => x * 10);
@@ -75,6 +78,9 @@ $view = ArrayView::toView($originalArray);
 $view[new MaskSelector([true, false, true, false, true])]; // [1, 3, 5]
 $view[new IndexListSelector([1, 2, 4])]; // [2, 3, 5]
 $view[new SliceSelector('::-1')]; // [5, 4, 3, 2, 1]
+
+$view[[true, false, true, false, true]]; // [1, 3, 5]
+$view[[1, 2, 4]]; // [2, 3, 5]
 $view['::-1']; // [5, 4, 3, 2, 1]
 
 $view[new MaskSelector([true, false, true, false, true])] = [10, 30, 50];
@@ -89,12 +95,21 @@ use Smoren\ArrayView\Selectors\SliceSelector;
 use Smoren\ArrayView\Views\ArrayView;
 
 $originalArray = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-
 $subview = ArrayView::toView($originalArray)
-    ->subview('::2')                                             // [1, 3, 5, 7, 9]
+    ->subview(new SliceSelector('::2'))                          // [1, 3, 5, 7, 9]
     ->subview(new MaskSelector([true, false, true, true, true])) // [1, 5, 7, 9]
     ->subview(new IndexListSelector([0, 1, 2]))                  // [1, 5, 7]
-    ->subview('1:');                                             // [5, 7]
+    ->subview(new SliceSelector('1:'));                          // [5, 7]
+
+$subview[':'] = [55, 77];
+print_r($originalArray); // [1, 2, 3, 4, 55, 6, 77, 8, 9, 10]
+
+$originalArray = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+$subview = ArrayView::toView($originalArray)
+    ->subview('::2')                           // [1, 3, 5, 7, 9]
+    ->subview([true, false, true, true, true]) // [1, 5, 7, 9]
+    ->subview([0, 1, 2])                       // [1, 5, 7]
+    ->subview('1:');                           // [5, 7]
 
 $subview[':'] = [55, 77];
 print_r($originalArray); // [1, 2, 3, 4, 55, 6, 77, 8, 9, 10]
