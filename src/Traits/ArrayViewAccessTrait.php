@@ -18,6 +18,7 @@ use Smoren\ArrayView\Util;
 
 /**
  * Trait providing methods for accessing elements in ArrayView object.
+ *
  * The trait implements methods for accessing, retrieving, setting,
  * and unsetting elements in the ArrayView object.
  *
@@ -28,6 +29,27 @@ trait ArrayViewAccessTrait
 {
     /**
      * Check if the specified offset exists in the ArrayView object.
+     *
+     * ```php
+     * $source = [1, 2, 3, 4, 5];
+     * $view = ArrayView::toView($source);
+     *
+     * isset($view[0]); // true
+     * isset($view[-1]); // true
+     * isset($view[10]); // false
+     *
+     * isset($view[new SliceSelector('::2')]); // true
+     * isset($view[new IndexListSelector([0, 2, 4])]); // true
+     * isset($view[new IndexListSelector([0, 2, 10])]); // false
+     * isset($view[new MaskSelector([true, true, false, false, true])]); // true
+     * isset($view[new MaskSelector([true, true, false, false, true, true])]); // false
+     *
+     * isset($view['::2']); // true
+     * isset($view[[0, 2, 4]]); // true
+     * isset($view[[0, 2, 10]]); // false
+     * isset($view[[true, true, false, false, true]]); // true
+     * isset($view[[true, true, false, false, true, true]]); // false
+     * ```
      *
      * @param numeric|S $offset The offset to check.
      *
@@ -51,7 +73,23 @@ trait ArrayViewAccessTrait
     /**
      * Get the value at the specified offset in the ArrayView object.
      *
-     * @param numeric|S $offset The offset to get the value from.
+     * ```php
+     * $source = [1, 2, 3, 4, 5];
+     * $view = ArrayView::toView($source);
+     *
+     * $view[0]; // 1
+     * $view[-1]; // 5
+     *
+     * $view[new SliceSelector('::2')]; // [1, 3, 5]
+     * $view[new IndexListSelector([0, 2, 4])]; // [1, 3, 5]
+     * $view[new MaskSelector([true, true, false, false, true])]; // [1, 2, 5]
+     *
+     * $view['::2']; // [1, 3, 5]
+     * $view[[0, 2, 4]]; // [1, 3, 5]
+     * $view[[true, true, false, false, true]]; // [1, 3, 5]
+     * ```
+     *
+     * @param numeric|S $offset The offset to get the value at.
      *
      * @return T|array<T> The value at the specified offset.
      *
@@ -75,6 +113,40 @@ trait ArrayViewAccessTrait
 
     /**
      * Set the value at the specified offset in the ArrayView object.
+     *
+     * ```php
+     * $source = [1, 2, 3, 4, 5];
+     * $view = ArrayView::toView($source);
+     *
+     * $view[0] = 11;
+     * $view[-1] = 55;
+     *
+     * $source; // [11, 2, 3, 4, 55]
+     *
+     * $source = [1, 2, 3, 4, 5];
+     * $view = ArrayView::toView($source);
+     *
+     * $view[new SliceSelector('::2')] = [11, 33, 55];
+     * $source; // [11, 2, 33, 4, 55]
+     *
+     * $view[new IndexListSelector([1, 3])] = [22, 44];
+     * $source; // [11, 22, 33, 44, 55]
+     *
+     * $view[new MaskSelector([true, false, false, false, true])] = [111, 555];
+     * $source; // [111, 22, 33, 44, 555]
+     *
+     * $source = [1, 2, 3, 4, 5];
+     * $view = ArrayView::toView($source);
+     *
+     * $view['::2'] = [11, 33, 55];
+     * $source; // [11, 2, 33, 4, 55]
+     *
+     * $view[[1, 3]] = [22, 44];
+     * $source; // [11, 22, 33, 44, 55]
+     *
+     * $view[[true, false, false, false, true]] = [111, 555];
+     * $source; // [111, 22, 33, 44, 555]
+     * ```
      *
      * @param numeric|S $offset The offset to set the value at.
      * @param T|array<T>|ArrayViewInterface<T> $value The value to set.
