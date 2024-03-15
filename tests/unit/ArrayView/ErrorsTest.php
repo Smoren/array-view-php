@@ -251,14 +251,14 @@ class ErrorsTest extends \Codeception\Test\Unit
         return [
             [[], ['a', 'b', 'c']],
             [[], ['1a', 'test', '!']],
-            [[], [[], [1, 2, 3], ['a' => 'test']], new \stdClass([])],
-            [[], [null, true, false, [], [1, 2, 3], ['a' => 'test']], new \stdClass([])],
+            [[], [['a' => 'test']], new \stdClass([])],
+            [[], [null, true, false, ['a' => 'test']], new \stdClass([])],
             [[1], ['a', 'b', 'c']],
             [[1], ['1a', 'test', '!']],
-            [[1], [null, true, false, [], [1, 2, 3], ['a' => 'test']], new \stdClass([])],
+            [[1], [null, true, false, ['a' => 'test']], new \stdClass([])],
             [[1, 2, 3], ['a', 'b', 'c']],
             [[1, 2, 3], ['1a', 'test', '!']],
-            [[2], [null, true, false, [], [1, 2, 3], ['a' => 'test']], new \stdClass([])],
+            [[2], [null, true, false, ['a' => 'test']], new \stdClass([])],
         ];
     }
 

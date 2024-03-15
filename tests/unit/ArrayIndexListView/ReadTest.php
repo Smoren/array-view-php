@@ -43,10 +43,58 @@ class ReadTest extends \Codeception\Test\Unit
     /**
      * @dataProvider dataProviderForRead
      */
-    public function testReadByIndex(array $source, array $mask, array $expected)
+    public function testReadByIndex(array $source, array $indexes, array $expected)
     {
         $view = ArrayView::toView($source);
-        $subArray = $view[new IndexListSelector($mask)];
+        $subArray = $view[new IndexListSelector($indexes)];
+
+        $this->assertSame($expected, $subArray);
+        $this->assertSame(\count($expected), \count($subArray));
+
+        for ($i = 0; $i < \count($subArray); ++$i) {
+            $this->assertSame($expected[$i], $subArray[$i]);
+        }
+
+        for ($i = 0; $i < \count($view); ++$i) {
+            $this->assertSame($source[$i], $view[$i]);
+        }
+
+        $this->assertSame($source, $view->toArray());
+        $this->assertSame($source, [...$view]);
+        $this->assertSame($expected, $subArray);
+    }
+
+    /**
+     * @dataProvider dataProviderForRead
+     */
+    public function testReadByArrayIndex(array $source, array $indexes, array $expected)
+    {
+        $view = ArrayView::toView($source);
+        $subArray = $view[$indexes];
+
+        $this->assertSame($expected, $subArray);
+        $this->assertSame(\count($expected), \count($subArray));
+
+        for ($i = 0; $i < \count($subArray); ++$i) {
+            $this->assertSame($expected[$i], $subArray[$i]);
+        }
+
+        for ($i = 0; $i < \count($view); ++$i) {
+            $this->assertSame($source[$i], $view[$i]);
+        }
+
+        $this->assertSame($source, $view->toArray());
+        $this->assertSame($source, [...$view]);
+        $this->assertSame($expected, $subArray);
+    }
+
+    /**
+     * @dataProvider dataProviderForRead
+     */
+    public function testReadByArrayViewIndex(array $source, array $indexes, array $expected)
+    {
+        $view = ArrayView::toView($source);
+        $subArray = $view[ArrayView::toView($indexes)];
 
         $this->assertSame($expected, $subArray);
         $this->assertSame(\count($expected), \count($subArray));

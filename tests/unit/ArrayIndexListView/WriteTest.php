@@ -10,11 +10,37 @@ class WriteTest extends \Codeception\Test\Unit
     /**
      * @dataProvider dataProviderForMaskSubviewWrite
      */
-    public function testWriteByIndex(array $source, array $config, array $toWrite, array $expected)
+    public function testWriteByIndex(array $source, array $indexes, array $toWrite, array $expected)
     {
         $view = ArrayView::toView($source);
 
-        $view[new IndexListSelector($config)] = $toWrite;
+        $view[new IndexListSelector($indexes)] = $toWrite;
+
+        $this->assertSame($expected, [...$view]);
+        $this->assertSame($expected, $source);
+    }
+
+    /**
+     * @dataProvider dataProviderForMaskSubviewWrite
+     */
+    public function testWriteByArrayIndex(array $source, array $indexes, array $toWrite, array $expected)
+    {
+        $view = ArrayView::toView($source);
+
+        $view[$indexes] = $toWrite;
+
+        $this->assertSame($expected, [...$view]);
+        $this->assertSame($expected, $source);
+    }
+
+    /**
+     * @dataProvider dataProviderForMaskSubviewWrite
+     */
+    public function testWriteByArrayViewIndex(array $source, array $indexes, array $toWrite, array $expected)
+    {
+        $view = ArrayView::toView($source);
+
+        $view[ArrayView::toView($indexes)] = $toWrite;
 
         $this->assertSame($expected, [...$view]);
         $this->assertSame($expected, $source);

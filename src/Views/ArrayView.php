@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Smoren\ArrayView\Views;
 
 use Smoren\ArrayView\Exceptions\IndexError;
+use Smoren\ArrayView\Exceptions\KeyError;
 use Smoren\ArrayView\Exceptions\SizeError;
 use Smoren\ArrayView\Exceptions\ReadonlyError;
 use Smoren\ArrayView\Exceptions\ValueError;
@@ -12,7 +13,6 @@ use Smoren\ArrayView\Interfaces\ArraySelectorInterface;
 use Smoren\ArrayView\Interfaces\ArrayViewInterface;
 use Smoren\ArrayView\Interfaces\MaskSelectorInterface;
 use Smoren\ArrayView\Selectors\MaskSelector;
-use Smoren\ArrayView\Selectors\SliceSelector;
 use Smoren\ArrayView\Traits\ArrayViewAccessTrait;
 use Smoren\ArrayView\Util;
 
@@ -32,7 +32,9 @@ use Smoren\ArrayView\Util;
 class ArrayView implements ArrayViewInterface
 {
     /**
-     * @use ArrayViewAccessTrait<T> for array access methods.
+     * @use ArrayViewAccessTrait<T, string|array<mixed>|ArrayViewInterface<mixed>|ArraySelectorInterface>
+     *
+     * for array access methods.
      */
     use ArrayViewAccessTrait;
 
@@ -258,19 +260,20 @@ class ArrayView implements ArrayViewInterface
      * $subview[0] = [11]; // throws ReadonlyError
      * ```
      *
-     * @param ArraySelectorInterface|string $selector The selector or string to filter the subview.
+     * @template S of string|array<mixed>|ArrayViewInterface<mixed>|ArraySelectorInterface
+     *
+     * @param S $selector The selector or string to filter the subview.
      * @param bool|null $readonly Flag indicating if the subview should be read-only.
      *
      * @return ArrayViewInterface<T> A new view representing the subview of this view.
      *
      * @throws IndexError if the selector is IndexListSelector and some indexes are out of range.
      * @throws SizeError if the selector is MaskSelector and size of the mask not equals to size of the view.
+     * @throws KeyError if the selector is not valid (e.g. non-sequential array).
      */
     public function subview($selector, bool $readonly = null): ArrayViewInterface
     {
-        return is_string($selector)
-            ? (new SliceSelector($selector))->select($this, $readonly)
-            : $selector->select($this, $readonly);
+        return $this->toSelector($selector)->select($this, $readonly);
     }
 
     /**
@@ -530,12 +533,8 @@ class ArrayView implements ArrayViewInterface
             return false;
         }
 
-        // Numeric string must be 'integer'
-        if (\is_string($offset) && \preg_match('/^-?\d+$/', $offset) !== 1) {
-            return false;
-        }
-
-        if (\is_numeric($offset) && !\is_integer($offset + 0)) {
+        // Numeric string must be integer
+        if (!\is_integer($offset + 0)) {
             return false;
         }
 
@@ -544,6 +543,7 @@ class ArrayView implements ArrayViewInterface
         } catch (IndexError $e) {
             return false;
         }
+
         return \is_array($this->source)
             ? \array_key_exists($index, $this->source)
             : $this->source->offsetExists($index);

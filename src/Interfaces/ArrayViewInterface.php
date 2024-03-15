@@ -86,7 +86,9 @@ interface ArrayViewInterface extends \ArrayAccess, \IteratorAggregate, \Countabl
     /**
      * Returns a subview of this view based on a selector or string slice.
      *
-     * @param ArraySelectorInterface|string $selector The selector or string to filter the subview.
+     * @template S of string|array<mixed>|ArrayViewInterface<mixed>|ArraySelectorInterface
+     *
+     * @param S $selector The selector or string to filter the subview.
      * @param bool|null $readonly Flag indicating if the subview should be read-only.
      *
      * @return ArrayViewInterface<T> A new view representing the subview of this view.

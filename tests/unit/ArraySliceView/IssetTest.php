@@ -20,7 +20,7 @@ class IssetTest extends \Codeception\Test\Unit
     /**
      * @dataProvider dataProviderForIssetSelectorStringTrue
      */
-    public function testIssetSelectorStringTrue(array $source, $slice)
+    public function testIssetSelectorStringTrue(array $source, string $slice)
     {
         $view = ArrayView::toView($source);
         $this->assertTrue(isset($view[$slice]));

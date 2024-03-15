@@ -47,6 +47,7 @@ class IssetTest extends \Codeception\Test\Unit
         $view = ArrayView::toView($source);
 
         $this->assertTrue(isset($view[new IndexListSelector($indexes)]));
+        $this->assertTrue(isset($view[$indexes]));
 
         $subview = $view->subview(new IndexListSelector($indexes));
         $this->assertSame(\count($indexes), \count($subview));

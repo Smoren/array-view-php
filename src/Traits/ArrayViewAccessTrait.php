@@ -10,8 +10,11 @@ use Smoren\ArrayView\Exceptions\NotSupportedError;
 use Smoren\ArrayView\Exceptions\ReadonlyError;
 use Smoren\ArrayView\Interfaces\ArraySelectorInterface;
 use Smoren\ArrayView\Interfaces\ArrayViewInterface;
+use Smoren\ArrayView\Selectors\IndexListSelector;
+use Smoren\ArrayView\Selectors\MaskSelector;
 use Smoren\ArrayView\Selectors\SliceSelector;
 use Smoren\ArrayView\Structs\Slice;
+use Smoren\ArrayView\Util;
 
 /**
  * Trait providing methods for accessing elements in ArrayView object.
@@ -19,13 +22,14 @@ use Smoren\ArrayView\Structs\Slice;
  * and unsetting elements in the ArrayView object.
  *
  * @template T Type of ArrayView values.
+ * @template S of string|array<mixed>|ArrayViewInterface<mixed>|ArraySelectorInterface Type of selectors.
  */
 trait ArrayViewAccessTrait
 {
     /**
      * Check if the specified offset exists in the ArrayView object.
      *
-     * @param numeric|string|ArraySelectorInterface $offset The offset to check.
+     * @param numeric|S $offset The offset to check.
      *
      * @return bool
      *
@@ -37,21 +41,17 @@ trait ArrayViewAccessTrait
             return $this->numericOffsetExists($offset);
         }
 
-        if (\is_string($offset) && Slice::isSlice($offset)) {
-            return true;
+        try {
+            return $this->toSelector($offset)->compatibleWith($this);
+        } catch (KeyError $e) {
+            return false;
         }
-
-        if ($offset instanceof ArraySelectorInterface) {
-            return $offset->compatibleWith($this);
-        }
-
-        return false;
     }
 
     /**
      * Get the value at the specified offset in the ArrayView object.
      *
-     * @param numeric|string|ArraySelectorInterface $offset The offset to get the value from.
+     * @param numeric|S $offset The offset to get the value from.
      *
      * @return T|array<T> The value at the specified offset.
      *
@@ -63,7 +63,6 @@ trait ArrayViewAccessTrait
     #[\ReturnTypeWillChange]
     public function offsetGet($offset)
     {
-        /** @var mixed $offset */
         if (\is_numeric($offset)) {
             if (!$this->numericOffsetExists($offset)) {
                 throw new IndexError("Index {$offset} is out of range.");
@@ -71,22 +70,13 @@ trait ArrayViewAccessTrait
             return $this->source[$this->convertIndex(\intval($offset))];
         }
 
-        if (\is_string($offset) && Slice::isSlice($offset)) {
-            return $this->subview(new SliceSelector($offset))->toArray();
-        }
-
-        if ($offset instanceof ArraySelectorInterface) {
-            return $this->subview($offset)->toArray();
-        }
-
-        $strOffset = \is_scalar($offset) ? \strval($offset) : \gettype($offset);
-        throw new KeyError("Invalid key: \"{$strOffset}\".");
+        return $this->subview($this->toSelector($offset))->toArray();
     }
 
     /**
      * Set the value at the specified offset in the ArrayView object.
      *
-     * @param numeric|string|ArraySelectorInterface $offset The offset to set the value at.
+     * @param numeric|S $offset The offset to set the value at.
      * @param T|array<T>|ArrayViewInterface<T> $value The value to set.
      *
      * @return void
@@ -99,40 +89,27 @@ trait ArrayViewAccessTrait
      */
     public function offsetSet($offset, $value): void
     {
-        /** @var mixed $offset */
         if ($this->isReadonly()) {
             throw new ReadonlyError("Cannot modify a readonly view.");
         }
 
-        if (\is_numeric($offset)) {
-            if (!$this->numericOffsetExists($offset)) {
-                throw new IndexError("Index {$offset} is out of range.");
-            }
-
-            // @phpstan-ignore-next-line
-            $this->source[$this->convertIndex(\intval($offset))] = $value;
+        if (!\is_numeric($offset)) {
+            $this->subview($this->toSelector($offset))->set($value);
             return;
         }
 
-        if (\is_string($offset) && Slice::isSlice($offset)) {
-            /** @var array<T>|ArrayViewInterface<T> $value */
-            $this->subview(new SliceSelector($offset))->set($value);
-            return;
+        if (!$this->numericOffsetExists($offset)) {
+            throw new IndexError("Index {$offset} is out of range.");
         }
 
-        if ($offset instanceof ArraySelectorInterface) {
-            $this->subview($offset)->set($value);
-            return;
-        }
-
-        $strOffset = \is_scalar($offset) ? \strval($offset) : \gettype($offset);
-        throw new KeyError("Invalid key: \"{$strOffset}\".");
+        // @phpstan-ignore-next-line
+        $this->source[$this->convertIndex(\intval($offset))] = $value;
     }
 
     /**
      * Unset the value at the specified offset in the array-like object.
      *
-     * @param numeric|string|ArraySelectorInterface $offset The offset to unset the value at.
+     * @param numeric|S $offset The offset to unset the value at.
      *
      * @return void
      *
@@ -143,5 +120,38 @@ trait ArrayViewAccessTrait
     public function offsetUnset($offset): void
     {
         throw new NotSupportedError();
+    }
+
+    /**
+     * Converts array to selector.
+     *
+     * @param S $input value to convert.
+     *
+     * @return ArraySelectorInterface
+     */
+    protected function toSelector($input): ArraySelectorInterface
+    {
+        if ($input instanceof ArraySelectorInterface) {
+            return $input;
+        }
+
+        if (\is_string($input) && Slice::isSlice($input)) {
+            return new SliceSelector($input);
+        }
+
+        if ($input instanceof ArrayViewInterface) {
+            $input = $input->toArray();
+        }
+
+        if (!\is_array($input) || !Util::isArraySequential($input)) {
+            $strOffset = \is_scalar($input) ? \strval($input) : \gettype($input);
+            throw new KeyError("Invalid key: \"{$strOffset}\".");
+        }
+
+        if (\count($input) > 0 && \is_bool($input[0])) {
+            return new MaskSelector($input);
+        }
+
+        return new IndexListSelector($input);
     }
 }
