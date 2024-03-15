@@ -237,7 +237,7 @@ class ArrayView implements ArrayViewInterface
      * Returns a subview of this view based on a selector or string slice.
      *
      * ##### Example (using selector objects)
-     * ```
+     * ```php
      * $source = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
      *
      * $subview = ArrayView::toView($source)
@@ -251,7 +251,7 @@ class ArrayView implements ArrayViewInterface
      * ```
      *
      * ##### Example (using short objects)
-     * ```
+     * ```php
      * $source = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
      *
      * $subview = ArrayView::toView($source)
@@ -265,7 +265,7 @@ class ArrayView implements ArrayViewInterface
      * ```
      *
      * ##### Readonly example
-     * ```
+     * ```php
      * $source = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
      * $subview = ArrayView::toView($source)->subview('::2');
      *
