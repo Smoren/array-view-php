@@ -44,6 +44,15 @@ class ExamplesTest extends \Codeception\Test\Unit
             [5, 4, 3, 2, 1],
             $originalView->subview(new SliceSelector('::-1'))->toArray(),
         );
+
+        $this->assertSame(
+            [1, 3, 5],
+            $originalView->subview([true, false, true, false, true])->toArray(),
+        );
+        $this->assertSame(
+            [2, 3, 5],
+            $originalView->subview([1, 2, 4])->toArray(),
+        );
         $this->assertSame(
             [5, 4, 3, 2, 1],
             $originalView->subview('::-1')->toArray(),
@@ -72,6 +81,15 @@ class ExamplesTest extends \Codeception\Test\Unit
             [5, 4, 3, 2, 1],
             $originalView[new SliceSelector('::-1')],
         );
+
+        $this->assertSame(
+            [1, 3, 5],
+            $originalView[[true, false, true, false, true]],
+        );
+        $this->assertSame(
+            [2, 3, 5],
+            $originalView[[1, 2, 4]],
+        );
         $this->assertSame(
             [5, 4, 3, 2, 1],
             $originalView['::-1'],
@@ -87,10 +105,27 @@ class ExamplesTest extends \Codeception\Test\Unit
         $originalArray = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 
         $subview = ArrayView::toView($originalArray)
-            ->subview('::2') // [1, 3, 5, 7, 9]
+            ->subview(new SliceSelector('::2')) // [1, 3, 5, 7, 9]
             ->subview(new MaskSelector([true, false, true, true, true])) // [1, 5, 7, 9]
-            ->subview(new IndexListSelector([0, 1, 2]))  // [1, 5, 7]
-            ->subview('1:');  // [5, 7]
+            ->subview(new IndexListSelector([0, 1, 2])) // [1, 5, 7]
+            ->subview(new SliceSelector('1:')); // [5, 7]
+
+        $this->assertSame([5, 7], $subview->toArray());
+        $this->assertSame([5, 7], $subview[':']);
+
+        $subview[':'] = [55, 77];
+        $this->assertSame([1, 2, 3, 4, 55, 6, 77, 8, 9, 10], $originalArray);
+    }
+
+    public function testCombinedSubview2()
+    {
+        $originalArray = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+
+        $subview = ArrayView::toView($originalArray)
+            ->subview('::2') // [1, 3, 5, 7, 9]
+            ->subview([true, false, true, true, true]) // [1, 5, 7, 9]
+            ->subview([0, 1, 2]) // [1, 5, 7]
+            ->subview('1:'); // [5, 7]
 
         $this->assertSame([5, 7], $subview->toArray());
         $this->assertSame([5, 7], $subview[':']);

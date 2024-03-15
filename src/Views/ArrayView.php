@@ -236,7 +236,7 @@ class ArrayView implements ArrayViewInterface
     /**
      * Returns a subview of this view based on a selector or string slice.
      *
-     * ##### Example
+     * ##### Example (using selector objects)
      * ```
      * $source = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
      *
@@ -244,7 +244,21 @@ class ArrayView implements ArrayViewInterface
      *     ->subview(new SliceSelector('::2'))                          // [1, 3, 5, 7, 9]
      *     ->subview(new MaskSelector([true, false, true, true, true])) // [1, 5, 7, 9]
      *     ->subview(new IndexListSelector([0, 1, 2]))                  // [1, 5, 7]
-     *     ->subview('1:');                                             // [5, 7]
+     *     ->subview(new SliceSelector('1:'));                          // [5, 7]
+     *
+     * $subview[':'] = [55, 77];
+     * print_r($source); // [1, 2, 3, 4, 55, 6, 77, 8, 9, 10]
+     * ```
+     *
+     * ##### Example (using short objects)
+     * ```
+     * $source = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+     *
+     * $subview = ArrayView::toView($source)
+     *     ->subview('::2')                           // [1, 3, 5, 7, 9]
+     *     ->subview([true, false, true, true, true]) // [1, 5, 7, 9]
+     *     ->subview([0, 1, 2])                       // [1, 5, 7]
+     *     ->subview('1:');                           // [5, 7]
      *
      * $subview[':'] = [55, 77];
      * print_r($source); // [1, 2, 3, 4, 55, 6, 77, 8, 9, 10]
