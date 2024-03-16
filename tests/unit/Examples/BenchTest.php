@@ -10,6 +10,39 @@ class BenchTest extends \Codeception\Test\Unit
 {
     private $n = 10000;
 
+    public function testReadIndexListView()
+    {
+        $n = $this->n;
+        $originalArray = range(0, $n);
+        $indexes = range(0, $n, 2);
+
+        $ts = \microtime(true);
+        $view = ArrayView::toView($originalArray);
+        $result = $view[$indexes];
+        $spent = \round(\microtime(true) - $ts, 4);
+
+        echo " [testReadIndexListView] SPENT: {$spent} s\n";
+        ob_flush();
+    }
+
+    public function testReadIndexListPure()
+    {
+        $n = $this->n;
+        $originalArray = range(0, $n);
+        $indexes = range(0, $n, 2);
+        $n_2 = \count($indexes);
+
+        $ts = \microtime(true);
+        $result = [];
+        for ($i = 0; $i < $n_2; $i++) {
+            $result[$i] = $originalArray[$indexes[$i]];
+        }
+        $spent = \round(\microtime(true) - $ts, 4);
+
+        echo " [testReadIndexListPure] SPENT: {$spent} s\n";
+        ob_flush();
+    }
+
     public function testReadSliceView()
     {
         $n = $this->n;
@@ -20,7 +53,7 @@ class BenchTest extends \Codeception\Test\Unit
         $result = $view['::2'];
         $spent = \round(\microtime(true) - $ts, 4);
 
-        echo "[testReadSliceView] SPENT: {$spent} s\n";
+        echo " [testReadSliceView] SPENT: {$spent} s\n";
         ob_flush();
     }
 
@@ -37,9 +70,10 @@ class BenchTest extends \Codeception\Test\Unit
         }
         $spent = \round(\microtime(true) - $ts, 4);
 
-        echo "[testReadSlicePure] SPENT: {$spent} s\n";
+        echo " [testReadSlicePure] SPENT: {$spent} s\n";
         ob_flush();
     }
+
     public function testWriteSliceView()
     {
         $n = $this->n;
@@ -52,7 +86,7 @@ class BenchTest extends \Codeception\Test\Unit
         $view['::2'] = $toWrite;
         $spent = \round(\microtime(true) - $ts, 4);
 
-        echo "[testWriteSliceView] SPENT: {$spent} s\n";
+        echo " [testWriteSliceView] SPENT: {$spent} s\n";
         ob_flush();
     }
 
@@ -69,7 +103,7 @@ class BenchTest extends \Codeception\Test\Unit
         }
         $spent = \round(\microtime(true) - $ts, 4);
 
-        echo "[testWriteSlicePure] SPENT: {$spent} s\n";
+        echo " [testWriteSlicePure] SPENT: {$spent} s\n";
         ob_flush();
     }
 }

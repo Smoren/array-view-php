@@ -54,8 +54,7 @@ class ArrayIndexListView extends ArrayView
      */
     public function toArray(): array
     {
-        /** @var Array<T> */
-        return array_map(fn(int $index) => $this[$index], array_keys($this->indexes));
+        return array_map(fn (int $index) => $this->source[$index], $this->indexes);
     }
 
     /**
