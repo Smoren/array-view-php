@@ -22,6 +22,8 @@ class ExamplesTest extends \Codeception\Test\Unit
 
         $this->assertSame(3, $originalView[2]);
         $this->assertSame(5, $originalView[4]);
+        $this->assertSame(9, $originalView[-1]);
+        $this->assertSame(8, $originalView[-2]);
 
         $originalView['1:7:2'] = [22, 44, 66];
         $this->assertSame([1, 22, 3, 44, 5, 66, 7, 8, 9], $originalArray);
