@@ -55,15 +55,15 @@ use Smoren\ArrayView\Views\ArrayView;
 $originalArray = [1, 2, 3, 4, 5];
 $view = ArrayView::toView($originalArray);
 
-$view->subview(new MaskSelector([true, false, true, false, true])).toArray(); // [1, 3, 5]
-$view->subview(new IndexListSelector([1, 2, 4])).toArray(); // [2, 3, 5]
-$view->subview(new SliceSelector('::-1')).toArray(); // [5, 4, 3, 2, 1]
+$view->subview(new MaskSelector([true, false, true, false, true]))->toArray(); // [1, 3, 5]
+$view->subview(new IndexListSelector([1, 2, 4]))->toArray(); // [2, 3, 5]
+$view->subview(new SliceSelector('::-1'))->toArray(); // [5, 4, 3, 2, 1]
 
-$view->subview([true, false, true, false, true]).toArray(); // [1, 3, 5]
-$view->subview([1, 2, 4]).toArray(); // [2, 3, 5]
-$view->subview('::-1').toArray(); // [5, 4, 3, 2, 1]
+$view->subview([true, false, true, false, true])->toArray(); // [1, 3, 5]
+$view->subview([1, 2, 4])->toArray(); // [2, 3, 5]
+$view->subview('::-1')->toArray(); // [5, 4, 3, 2, 1]
 
-$view->subview(new MaskSelector([true, false, true, false, true])).apply(fn ($x) => x * 10);
+$view->subview(new MaskSelector([true, false, true, false, true]))->apply(fn ($x) => x * 10);
 print_r($originalArray); // [10, 2, 30, 4, 50]
 ```
 
