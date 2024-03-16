@@ -406,11 +406,10 @@ class ArrayView implements ArrayViewInterface
             throw new SizeError("Length of values array not equal to view length ({$dataSize} != {$thisSize}).");
         }
 
-        $newValuesView = ArrayView::toView($newValues);
-
         $size = \count($this);
+
         for ($i = 0; $i < $size; $i++) {
-            $this[$i] = $newValuesView[$i];
+            $this[$i] = $newValues[$i];
         }
 
         return $this;
