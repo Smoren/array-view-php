@@ -159,4 +159,29 @@ class ExamplesTest extends \Codeception\Test\Unit
         $subview[':'] = [55, 77];
         $this->assertSame([1, 2, 3, 4, 55, 6, 77, 8, 9, 10], $originalArray);
     }
+
+    public function testSelectorsPipeNested()
+    {
+        $originalArray = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+
+        $selector = new PipeSelector([
+            new SliceSelector('::2'),
+            new PipeSelector([
+                new MaskSelector([true, false, true, true, true]),
+                new IndexListSelector([0, 1, 2]),
+            ]),
+            new SliceSelector('1:'),
+        ]);
+
+        $view = ArrayView::toView($originalArray);
+        $this->assertTrue(isset($view[$selector]));
+
+        $subview = $view->subview($selector);
+
+        $this->assertSame([5, 7], $subview->toArray());
+        $this->assertSame([5, 7], $subview[':']);
+
+        $subview[':'] = [55, 77];
+        $this->assertSame([1, 2, 3, 4, 55, 6, 77, 8, 9, 10], $originalArray);
+    }
 }
