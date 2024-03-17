@@ -56,6 +56,7 @@ class ReadTest extends \Codeception\Test\Unit
 
         $this->assertSame($subview->toArray(), $expected);
         $this->assertSame($subArray, $expected);
+        $this->assertSame($selector->getValue(), $selectors);
     }
 
     /**
@@ -344,6 +345,32 @@ class ReadTest extends \Codeception\Test\Unit
                     new SliceSelector('::2'),
                     new SliceSelector('::2'),
                     new SliceSelector('::2'),
+                    new SliceSelector('1:'),
+                ],
+                [9],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+                [
+                    new SliceSelector('::2'),
+                    new PipeSelector([
+                        new SliceSelector('::2'),
+                        new SliceSelector('::2'),
+                    ]),
+                    new SliceSelector('1:'),
+                ],
+                [9],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+                [
+                    new SliceSelector('::2'),
+                    new PipeSelector([
+                        new PipeSelector([
+                            new SliceSelector('::2'),
+                            new SliceSelector('::2'),
+                        ]),
+                    ]),
                     new SliceSelector('1:'),
                 ],
                 [9],
