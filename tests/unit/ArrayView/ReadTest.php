@@ -4,6 +4,7 @@ namespace Smoren\ArrayView\Tests\Unit\ArrayView;
 
 use Smoren\ArrayView\Selectors\IndexListSelector;
 use Smoren\ArrayView\Selectors\MaskSelector;
+use Smoren\ArrayView\Selectors\PipeSelector;
 use Smoren\ArrayView\Selectors\SliceSelector;
 use Smoren\ArrayView\Views\ArrayIndexListView;
 use Smoren\ArrayView\Views\ArrayMaskView;
@@ -40,6 +41,21 @@ class ReadTest extends \Codeception\Test\Unit
         $view = $viewGetter($source);
 
         $this->assertSame($view->toArray(), $expected);
+    }
+
+    /**
+     * @dataProvider dataProviderForReadPipe
+     */
+    public function testReadPipe(array $source, array $selectors, array $expected)
+    {
+        $view = ArrayView::toView($source);
+        $selector = new PipeSelector($selectors);
+
+        $subview = $view->subview($selector);
+        $subArray = $view[$selector];
+
+        $this->assertSame($subview->toArray(), $expected);
+        $this->assertSame($subArray, $expected);
     }
 
     /**
@@ -188,6 +204,148 @@ class ReadTest extends \Codeception\Test\Unit
                     ->subview('::2')
                     ->subview('::2')
                     ->subview('1:'),
+                [9],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+                fn (array &$source) => ArrayView::toView($source)
+                    ->subview(new PipeSelector([
+                        new SliceSelector('::2'),
+                        new MaskSelector([true, false, true, false, true]),
+                    ]))
+                    ->subview(new IndexListSelector([0, 2])),
+                [1, 9],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+                fn (array &$source) => ArrayView::toView($source)
+                    ->subview(new SliceSelector('::2'))
+                    ->subview(new PipeSelector([
+                        new MaskSelector([true, false, true, false, true]),
+                    ]))
+                    ->subview(new IndexListSelector([0, 2])),
+                [1, 9],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+                fn (array &$source) => ArrayView::toView($source)
+                    ->subview(new SliceSelector('::2'))
+                    ->subview(new PipeSelector([
+                        new MaskSelector([true, false, true, false, true]),
+                        new IndexListSelector([0, 2])
+                    ])),
+                [1, 9],
+            ],
+        ];
+    }
+
+    public function dataProviderForReadPipe(): array
+    {
+        return [
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+                [new SliceSelector('::2')],
+                [1, 3, 5, 7, 9],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+                [new SliceSelector('::2')],
+                [1, 3, 5, 7, 9],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+                [new SliceSelector('::2')],
+                [1, 3, 5, 7, 9],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+                [
+                    new MaskSelector([true, true, true, true, true, true, true, true, true, true]),
+                    new SliceSelector('::2'),
+                ],
+                [1, 3, 5, 7, 9],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+                [
+                    new SliceSelector('::1'),
+                    new SliceSelector('::2'),
+                ],
+                [1, 3, 5, 7, 9],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+                [
+                    new SliceSelector('::2'),
+                    new MaskSelector([true, false, true, false, true]),
+                ],
+                [1, 5, 9],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+                [
+                    new SliceSelector('::2'),
+                    new MaskSelector([true, false, true, false, true]),
+                    new IndexListSelector([0, 2]),
+                ],
+                [1, 9],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+                [
+                    new SliceSelector('::2'),
+                    new MaskSelector([true, false, true, false, true]),
+                    new IndexListSelector([0, 2]),
+                    new SliceSelector('1:'),
+                ],
+                [9],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+                [
+                    new MaskSelector([true, false, true, false, true, false, true, false, true, false]),
+                    new MaskSelector([true, false, true, false, true]),
+                    new MaskSelector([true, false, true]),
+                    new MaskSelector([false, true]),
+                ],
+                [9],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+                [
+                    new MaskSelector([true, false, true, false, true, false, true, false, true, false]),
+                    new MaskSelector([true, false, true, false, true]),
+                    new MaskSelector([true, false, true]),
+                ],
+                [1, 9],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+                [
+                    new IndexListSelector([0, 2, 4, 6, 8]),
+                    new IndexListSelector([0, 2, 4]),
+                    new IndexListSelector([0, 2]),
+                    new IndexListSelector([1]),
+                ],
+                [9],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+                [
+                    new SliceSelector('::2'),
+                    new SliceSelector('::2'),
+                    new SliceSelector('::2'),
+                ],
+                [1, 9],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+                [
+                    new SliceSelector('::2'),
+                    new SliceSelector('::2'),
+                    new SliceSelector('::2'),
+                    new SliceSelector('1:'),
+                ],
                 [9],
             ],
         ];
