@@ -29,6 +29,26 @@ use Smoren\ArrayView\Views\ArrayView;
  * $subview[':'] = [55, 77];
  * print_r($originalArray); // [1, 2, 3, 4, 55, 6, 77, 8, 9, 10]
  * ```
+ *
+ * ##### Example with nested pipes
+ * ```php
+ * $originalArray = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+ * $selector = new PipeSelector([
+ *     new SliceSelector('::2'),
+ *     new PipeSelector([
+ *         new MaskSelector([true, false, true, true, true]),
+ *         new IndexListSelector([0, 1, 2]),
+ *     ])
+ *     new SliceSelector('1:'),
+ * ]);
+ *
+ * $view = ArrayView::toView($originalArray);
+ * $subview = $view->subview($selector);
+ * print_r($subview[':']); // [5, 7]
+ *
+ * $subview[':'] = [55, 77];
+ * print_r($originalArray); // [1, 2, 3, 4, 55, 6, 77, 8, 9, 10]
+ * ```
  */
 final class PipeSelector implements PipeSelectorInterface
 {

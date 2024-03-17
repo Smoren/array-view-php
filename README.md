@@ -25,7 +25,7 @@ composer require smoren/array-view
 
 ## Usage
 ## Quick examples
-### Slicing
+### Indexing and Slicing
 ```php
 use Smoren\ArrayView\Views\ArrayView;
 
