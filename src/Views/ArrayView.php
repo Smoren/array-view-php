@@ -234,6 +234,26 @@ class ArrayView implements ArrayViewInterface
     }
 
     /**
+     * Compares the elements of the current ArrayView instance with another array or ArrayView
+     * using the provided comparator function.
+     *
+     * @template U The type of the elements in the array for comparison with.
+     *
+     * @param array<U>|ArrayViewInterface<U> $data The array or ArrayView to compare to.
+     * @param callable(T, U, int): bool $comparator Function that determines the comparison logic between the elements.
+     *
+     * @return MaskSelectorInterface A MaskSelector instance representing the results of the element comparisons.
+     *
+     * @throws ValueError if the $data is not sequential array.
+     * @throws SizeError if size of $data not equals to size of the view.
+     */
+    public function matchWith($data, callable $comparator): MaskSelectorInterface
+    {
+        $data = $data instanceof ArrayViewInterface ? $data->toArray() : $data;
+        return new MaskSelector(array_map($comparator, $this->toArray(), $data, array_keys($data)));
+    }
+
+    /**
      * Returns a subview of this view based on a selector or string slice.
      *
      * ##### Example (using selector objects)

@@ -84,6 +84,22 @@ interface ArrayViewInterface extends \ArrayAccess, \IteratorAggregate, \Countabl
     public function is(callable $predicate): MaskSelectorInterface;
 
     /**
+     * Compares the elements of the current ArrayView instance with another array or ArrayView
+     * using the provided comparator function.
+     *
+     * @template U The type of the elements in the array for comparison with.
+     *
+     * @param array<U>|ArrayViewInterface<U> $data The array or ArrayView to compare to.
+     * @param callable(T, U, int): bool $comparator Function that determines the comparison logic between the elements.
+     *
+     * @return MaskSelectorInterface A MaskSelector instance representing the results of the element comparisons.
+     *
+     * @throws ValueError if the $data is not sequential array.
+     * @throws SizeError if size of $data not equals to size of the view.
+     */
+    public function matchWith($data, callable $comparator): MaskSelectorInterface;
+
+    /**
      * Returns a subview of this view based on a selector or string slice.
      *
      * @param string|array<int|bool>|ArrayViewInterface<int|bool>|ArraySelectorInterface $selector The selector or
