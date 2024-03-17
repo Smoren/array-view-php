@@ -11,7 +11,6 @@ use Smoren\ArrayView\Views\ArrayMaskView;
 /**
  * Represents a mask selector that selects elements based on the provided array of boolean mask values.
  *
- * ##### Example
  * ```php
  * $originalArray = [1, 2, 3, 4, 5];
  * $view = ArrayView::toView($originalArray);

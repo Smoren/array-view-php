@@ -14,13 +14,11 @@ use Smoren\ArrayView\Interfaces\ArrayViewInterface;
  *
  * Each element in the view is included or excluded based on the specified boolean mask.
  *
- * <pre>
- *
+ * ```php
  * $source = [1, 2, 3, 4, 5];
  * $view = ArrayView::toView($source)->subview(new MaskSelector([true, false, true, false, true]));
  * $view->toArray(); // [1, 3, 5]
- *
- * </pre>
+ * ```
  *
  * @template T Type of array source elements.
  *

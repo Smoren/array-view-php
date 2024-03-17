@@ -12,7 +12,6 @@ use Smoren\ArrayView\Views\ArraySliceView;
 /**
  * Represents a slice selector that selects elements based on the provided slice parameters.
  *
- * ##### Example
  *  ```php
  * $originalArray = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
  * $view = ArrayView::toView($originalArray);

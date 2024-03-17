@@ -12,7 +12,6 @@ use Smoren\ArrayView\Views\ArrayIndexListView;
 /**
  * Represents an index list selector that selects elements based on the provided array of indexes.
  *
- * ##### Example
  * ```php
  * $originalArray = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
  * $view = ArrayView::toView($originalArray);

@@ -12,7 +12,6 @@ use Smoren\ArrayView\Views\ArrayView;
 /**
  * Represents a selector that applies a series of selectors sequentially to a source array view.
  *
- * ##### Example
  * ```php
  * $originalArray = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
  * $selector = new PipeSelector([
