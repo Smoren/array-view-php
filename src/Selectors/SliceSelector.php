@@ -38,7 +38,7 @@ use Smoren\ArrayView\Views\ArraySliceView;
  * print_r($view->subview($selector)->toArray()); // [9, 8, 7, 6, 5, 4, 3, 2]
  * ```
  */
-class SliceSelector extends Slice implements ArraySelectorInterface
+final class SliceSelector extends Slice implements ArraySelectorInterface
 {
     /**
      * Creates a new SliceSelector instance with the provided slice parameters.

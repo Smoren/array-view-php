@@ -30,7 +30,7 @@ use Smoren\ArrayView\Views\ArrayView;
  * print_r($originalArray); // [1, 2, 3, 4, 55, 6, 77, 8, 9, 10]
  * ```
  */
-class PipeSelector implements PipeSelectorInterface
+final class PipeSelector implements PipeSelectorInterface
 {
     /**
      * @var array<ArraySelectorInterface> An array of selectors to be applied sequentially.

@@ -21,7 +21,7 @@ use Smoren\ArrayView\Views\ArrayMaskView;
  * print_r($view->subview($selector)->toArray()); // [1, 3, 5]
  * ```
  */
-class MaskSelector implements MaskSelectorInterface
+final class MaskSelector implements MaskSelectorInterface
 {
     /**
      * @var array<bool> The array of boolean mask values to select elements based on.
