@@ -89,7 +89,7 @@ $view[new MaskSelector([true, false, true, false, true])] = [10, 30, 50];
 print_r($originalArray); // [10, 2, 30, 4, 50]
 ```
 
-### Combining subviews
+### Combining Subviews
 ```php
 use Smoren\ArrayView\Selectors\IndexListSelector;
 use Smoren\ArrayView\Selectors\MaskSelector;
@@ -112,6 +112,29 @@ $subview = ArrayView::toView($originalArray)
     ->subview([true, false, true, true, true]) // [1, 5, 7, 9]
     ->subview([0, 1, 2])                       // [1, 5, 7]
     ->subview('1:');                           // [5, 7]
+
+$subview[':'] = [55, 77];
+print_r($originalArray); // [1, 2, 3, 4, 55, 6, 77, 8, 9, 10]
+```
+
+### Selectors Pipe
+```php
+use Smoren\ArrayView\Selectors\IndexListSelector;
+use Smoren\ArrayView\Selectors\MaskSelector;
+use Smoren\ArrayView\Selectors\SliceSelector;
+use Smoren\ArrayView\Views\ArrayView;
+
+$originalArray = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+$selector = new PipeSelector([
+    new SliceSelector('::2'),
+    new MaskSelector([true, false, true, true, true]),
+    new IndexListSelector([0, 1, 2]),
+    new SliceSelector('1:'),
+]);
+
+$view = ArrayView::toView($originalArray);
+$subview = $view->subview($selector);
+print_r($subview[':']); // [5, 7]
 
 $subview[':'] = [55, 77];
 print_r($originalArray); // [1, 2, 3, 4, 55, 6, 77, 8, 9, 10]

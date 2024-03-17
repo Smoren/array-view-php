@@ -6,6 +6,7 @@ namespace Smoren\ArrayView\Tests\Unit\Examples;
 
 use Smoren\ArrayView\Selectors\IndexListSelector;
 use Smoren\ArrayView\Selectors\MaskSelector;
+use Smoren\ArrayView\Selectors\PipeSelector;
 use Smoren\ArrayView\Selectors\SliceSelector;
 use Smoren\ArrayView\Views\ArrayView;
 
@@ -119,7 +120,7 @@ class ExamplesTest extends \Codeception\Test\Unit
         $this->assertSame([1, 2, 3, 4, 55, 6, 77, 8, 9, 10], $originalArray);
     }
 
-    public function testCombinedSubview2()
+    public function testCombinedSubviewShort()
     {
         $originalArray = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 
@@ -128,6 +129,29 @@ class ExamplesTest extends \Codeception\Test\Unit
             ->subview([true, false, true, true, true]) // [1, 5, 7, 9]
             ->subview([0, 1, 2]) // [1, 5, 7]
             ->subview('1:'); // [5, 7]
+
+        $this->assertSame([5, 7], $subview->toArray());
+        $this->assertSame([5, 7], $subview[':']);
+
+        $subview[':'] = [55, 77];
+        $this->assertSame([1, 2, 3, 4, 55, 6, 77, 8, 9, 10], $originalArray);
+    }
+
+    public function testSelectorsPipe()
+    {
+        $originalArray = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+
+        $selector = new PipeSelector([
+            new SliceSelector('::2'),
+            new MaskSelector([true, false, true, true, true]),
+            new IndexListSelector([0, 1, 2]),
+            new SliceSelector('1:'),
+        ]);
+
+        $view = ArrayView::toView($originalArray);
+        $this->assertTrue(isset($view[$selector]));
+
+        $subview = $view->subview($selector);
 
         $this->assertSame([5, 7], $subview->toArray());
         $this->assertSame([5, 7], $subview[':']);

@@ -4,6 +4,7 @@ namespace Smoren\ArrayView\Tests\Unit\ArrayView;
 
 use Smoren\ArrayView\Selectors\IndexListSelector;
 use Smoren\ArrayView\Selectors\MaskSelector;
+use Smoren\ArrayView\Selectors\PipeSelector;
 use Smoren\ArrayView\Selectors\SliceSelector;
 use Smoren\ArrayView\Structs\Slice;
 use Smoren\ArrayView\Views\ArrayView;
@@ -106,6 +107,7 @@ class WriteTest extends \Codeception\Test\Unit
 
     /**
      * @dataProvider dataProviderForWriteCombine
+     * @dataProvider dataProviderForWritePipe
      */
     public function testWriteBySet(array $source, callable $viewGetter, $toWrite, array $expected)
     {
@@ -118,6 +120,7 @@ class WriteTest extends \Codeception\Test\Unit
 
     /**
      * @dataProvider dataProviderForWriteCombine
+     * @dataProvider dataProviderForWritePipe
      */
     public function testWriteBySlice(array $source, callable $viewGetter, $toWrite, array $expected)
     {
@@ -280,6 +283,142 @@ class WriteTest extends \Codeception\Test\Unit
                     ->subview('::2'),
                 111,
                 [111, 2, 3, 4, 5, 6, 7, 8, 111, 10],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+                fn (array &$source) => ArrayView::toView($source)
+                    ->subview(new PipeSelector([
+                        new SliceSelector('::2'),
+                        new MaskSelector([true, false, true, false, true]),
+                    ]))
+                    ->subview(new IndexListSelector([0, 2])),
+                [11, 99],
+                [11, 2, 3, 4, 5, 6, 7, 8, 99, 10],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+                fn (array &$source) => ArrayView::toView($source)
+                    ->subview(new SliceSelector('::2'))
+                    ->subview(new PipeSelector([
+                        new MaskSelector([true, false, true, false, true]),
+                    ]))
+                    ->subview(new IndexListSelector([0, 2])),
+                [11, 99],
+                [11, 2, 3, 4, 5, 6, 7, 8, 99, 10],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+                fn (array &$source) => ArrayView::toView($source)
+                    ->subview(new SliceSelector('::2'))
+                    ->subview(new PipeSelector([
+                        new MaskSelector([true, false, true, false, true]),
+                        new IndexListSelector([0, 2]),
+                    ])),
+                [11, 99],
+                [11, 2, 3, 4, 5, 6, 7, 8, 99, 10],
+            ],
+        ];
+    }
+
+    public function dataProviderForWritePipe(): array
+    {
+        return [
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+                fn (array &$source) => ArrayView::toView($source)->subview(
+                    new PipeSelector([
+                        new SliceSelector('::2'),
+                    ])
+                ),
+                [11, 33, 55, 77, 99],
+                [11, 2, 33, 4, 55, 6, 77, 8, 99, 10],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+                fn (array &$source) => ArrayView::toView($source)->subview(
+                    new PipeSelector([
+                        new SliceSelector('::2'),
+                        new MaskSelector([true, false, true, false, true]),
+                    ])
+                ),
+                [11, 55, 99],
+                [11, 2, 3, 4, 55, 6, 7, 8, 99, 10],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+                fn (array &$source) => ArrayView::toView($source)->subview(
+                    new PipeSelector([
+                        new SliceSelector('::2'),
+                        new MaskSelector([true, false, true, false, true]),
+                        new IndexListSelector([0, 2]),
+                    ])
+                ),
+                [11, 99],
+                [11, 2, 3, 4, 5, 6, 7, 8, 99, 10],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+                fn (array &$source) => ArrayView::toView($source)->subview(
+                    new PipeSelector([
+                        new SliceSelector('::2'),
+                        new MaskSelector([true, false, true, false, true]),
+                        new IndexListSelector([0, 2]),
+                        new SliceSelector('1:'),
+                    ])
+                ),
+                [99],
+                [1, 2, 3, 4, 5, 6, 7, 8, 99, 10],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+                fn (array &$source) => ArrayView::toView($source)->subview(
+                    new PipeSelector([
+                        new MaskSelector([true, false, true, false, true, false, true, false, true, false]),
+                        new MaskSelector([true, false, true, false, true]),
+                        new MaskSelector([true, false, true]),
+                        new MaskSelector([false, true]),
+                    ])
+                ),
+                [99],
+                [1, 2, 3, 4, 5, 6, 7, 8, 99, 10],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+                fn (array &$source) => ArrayView::toView($source)->subview(
+                    new PipeSelector([
+                        new IndexListSelector([0, 2, 4, 6, 8]),
+                        new IndexListSelector([0, 2, 4]),
+                        new IndexListSelector([0, 2]),
+                        new IndexListSelector([1]),
+                    ])
+                ),
+                [99],
+                [1, 2, 3, 4, 5, 6, 7, 8, 99, 10],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+                fn (array &$source) => ArrayView::toView($source)->subview(
+                    new PipeSelector([
+                        new SliceSelector('::2'),
+                        new SliceSelector('::2'),
+                        new SliceSelector('::2'),
+                        new SliceSelector('1:'),
+                    ])
+                ),
+                [99],
+                [1, 2, 3, 4, 5, 6, 7, 8, 99, 10],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+                fn (array &$source) => ArrayView::toView($source)->subview(
+                    new PipeSelector([
+                        new SliceSelector(new Slice(null, null, 2)),
+                        new SliceSelector('::2'),
+                        new SliceSelector('::2'),
+                    ])
+                ),
+                [11, 99],
+                [11, 2, 3, 4, 5, 6, 7, 8, 99, 10],
             ],
         ];
     }
