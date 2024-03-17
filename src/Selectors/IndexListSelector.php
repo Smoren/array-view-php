@@ -11,6 +11,16 @@ use Smoren\ArrayView\Views\ArrayIndexListView;
 
 /**
  * Represents an index list selector that selects elements based on the provided array of indexes.
+ *
+ * ##### Example
+ * ```php
+ * $originalArray = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+ * $view = ArrayView::toView($originalArray);
+ *
+ * $selector = new IndexListSelector([0, 2, 4]);
+ * print_r($view[$selector]); // [1, 3, 5]
+ * print_r($view->subview($selector)->toArray()); // [1, 3, 5]
+ * ```
  */
 final class IndexListSelector implements IndexListSelectorInterface
 {

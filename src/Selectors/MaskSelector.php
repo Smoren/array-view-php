@@ -10,6 +10,16 @@ use Smoren\ArrayView\Views\ArrayMaskView;
 
 /**
  * Represents a mask selector that selects elements based on the provided array of boolean mask values.
+ *
+ * ##### Example
+ * ```php
+ * $originalArray = [1, 2, 3, 4, 5];
+ * $view = ArrayView::toView($originalArray);
+ *
+ * $selector = new MaskSelector([true, false, true, false, true]);
+ * print_r($view[$selector]); // [1, 3, 5]
+ * print_r($view->subview($selector)->toArray()); // [1, 3, 5]
+ * ```
  */
 class MaskSelector implements MaskSelectorInterface
 {
