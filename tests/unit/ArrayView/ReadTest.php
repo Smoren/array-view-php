@@ -60,21 +60,44 @@ class ReadTest extends \Codeception\Test\Unit
     }
 
     /**
-     * @dataProvider dataProviderForIsAndFilter
+     * @dataProvider dataProviderForMatchAndFilter
      */
-    public function testIsAndFilter(array $source, callable $predicate, array $expectedMask, array $expectedArray)
+    public function testMatchAndFilter(array $source, callable $predicate, array $expectedMask, array $expectedArray)
     {
         // Given
         $view = ArrayView::toView($source);
 
         // When
         $boolMask = $view->is($predicate);
+        $boolMaskCopy = $view->match($predicate);
         $filtered = $view->filter($predicate);
 
         // Then
         $this->assertSame($expectedMask, $boolMask->getValue());
+        $this->assertSame($expectedMask, $boolMaskCopy->getValue());
         $this->assertSame($expectedArray, $view->subview($boolMask)->toArray());
         $this->assertSame($expectedArray, $filtered->toArray());
+    }
+
+    /**
+     * @dataProvider dataProviderForMatchWith
+     */
+    public function testMatchWith(
+        array $source,
+        array $another,
+        callable $comparator,
+        array $expectedMask,
+        array $expectedArray
+    ) {
+        // Given
+        $view = ArrayView::toView($source);
+
+        // When
+        $boolMask = $view->matchWith($another, $comparator);
+
+        // Then
+        $this->assertSame($expectedMask, $boolMask->getValue());
+        $this->assertSame($expectedArray, $view->subview($boolMask)->toArray());
     }
 
     public function dataProviderForArrayRead(): array
@@ -378,7 +401,7 @@ class ReadTest extends \Codeception\Test\Unit
         ];
     }
 
-    public function dataProviderForIsAndFilter(): array
+    public function dataProviderForMatchAndFilter(): array
     {
         return [
             [
@@ -404,6 +427,47 @@ class ReadTest extends \Codeception\Test\Unit
                 fn (int $_, int $i) => $i % 2 === 0,
                 [true, false, true, false, true, false, true, false, true, false],
                 [1, 3, 5, 7, 9],
+            ],
+        ];
+    }
+
+    public function dataProviderForMatchWith(): array
+    {
+        return [
+            [
+                [],
+                [],
+                fn (int $lhs, int $rhs) => $rhs > $lhs,
+                [],
+                [],
+            ],
+            [
+                [1],
+                [1],
+                fn (int $lhs, int $rhs) => $rhs > $lhs,
+                [false],
+                [],
+            ],
+            [
+                [1],
+                [2],
+                fn (int $lhs, int $rhs) => $rhs > $lhs,
+                [true],
+                [1],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+                [1, 22, 3, 4, 5, 6, 7, 8, 99, 10],
+                fn (int $lhs, int $rhs) => $rhs > $lhs,
+                [false, true, false, false, false, false, false, false, true, false],
+                [2, 9],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+                [1, 22, 3, 4, 5, 6, 7, 8, 99, 10],
+                fn (int $lhs, int $rhs) => $lhs >= $rhs,
+                [true, false, true, true, true, true, true, true, false, true],
+                [1, 3, 4, 5, 6, 7, 8, 10],
             ],
         ];
     }
