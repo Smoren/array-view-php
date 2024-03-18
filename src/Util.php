@@ -26,7 +26,7 @@ class Util
      */
     public static function normalizeIndex(int $index, int $containerLength, bool $throwError = true): int
     {
-        $dist = $index >= 0 ? $index : abs($index) - 1;
+        $dist = $index >= 0 ? $index : \abs($index) - 1;
         if ($throwError && $dist >= $containerLength) {
             throw new IndexError("Index {$index} is out of range.");
         }
@@ -43,9 +43,9 @@ class Util
      */
     public static function isArraySequential(array $source, bool $forceCustomImplementation = false): bool
     {
-        if (!function_exists('array_is_list') || $forceCustomImplementation) {
-            return \count($source) === 0 || array_keys($source) === range(0, count($source) - 1);
+        if (!\function_exists('array_is_list') || $forceCustomImplementation) {
+            return \count($source) === 0 || \array_keys($source) === \range(0, \count($source) - 1);
         }
-        return array_is_list($source);
+        return \array_is_list($source);
     }
 }
