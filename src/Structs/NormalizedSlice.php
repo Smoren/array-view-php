@@ -65,7 +65,7 @@ class NormalizedSlice extends Slice implements \Countable, \IteratorAggregate
      */
     public function count(): int
     {
-        return intval(ceil(abs((($this->end - $this->start) / $this->step))));
+        return \intval(\ceil(\abs((($this->end - $this->start) / $this->step))));
     }
 
     /**

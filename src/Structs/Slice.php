@@ -47,7 +47,7 @@ class Slice
         }
 
         if (!self::isSliceString($s)) {
-            $str = \is_scalar($s) ? "{$s}" : gettype($s);
+            $str = \is_scalar($s) ? "{$s}" : \gettype($s);
             throw new ValueError("Invalid slice: \"{$str}\".");
         }
 
