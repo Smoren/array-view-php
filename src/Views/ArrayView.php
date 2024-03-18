@@ -226,11 +226,42 @@ class ArrayView implements ArrayViewInterface
      * @param callable(T, int): bool $predicate Function that returns a boolean value for each element.
      *
      * @return MaskSelector Boolean mask for selecting elements that satisfy the predicate.
+     *
+     * @see ArrayViewInterface::match() Full synonim.
      */
     public function is(callable $predicate): MaskSelectorInterface
     {
         $data = $this->toArray();
         return new MaskSelector(array_map($predicate, $data, array_keys($data)));
+    }
+
+    /**
+     * Checks if all elements in the view satisfy a given predicate function.
+     *
+     * ##### Example
+     * ```php
+     * $source = [1, 2, 3, 4, 5, 6];
+     * $view = ArrayView::toView($source);
+     *
+     * $mask = $view->is(fn ($x) => $x % 2 === 0);
+     * $mask->getValue(); // [false, true, false, true, false, true]
+     *
+     * $view->subview($mask)->toArray(); // [2, 4, 6]
+     * $view[$mask]; // [2, 4, 6]
+     *
+     * $view[$mask] = [20, 40, 60];
+     * $source; // [1, 20, 3, 40, 5, 60]
+     * ```
+     *
+     * @param callable(T, int): bool $predicate Function that returns a boolean value for each element.
+     *
+     * @return MaskSelector Boolean mask for selecting elements that satisfy the predicate.
+     *
+     * @see ArrayView::match() Full synonim.
+     */
+    public function match(callable $predicate): MaskSelectorInterface
+    {
+        return $this->is($predicate);
     }
 
     /**
@@ -246,6 +277,8 @@ class ArrayView implements ArrayViewInterface
      *
      * @throws ValueError if the $data is not sequential array.
      * @throws SizeError if size of $data not equals to size of the view.
+     *
+     * @see ArrayView::is() Full synonim.
      */
     public function matchWith($data, callable $comparator): MaskSelectorInterface
     {

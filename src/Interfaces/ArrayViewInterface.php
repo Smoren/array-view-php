@@ -80,8 +80,21 @@ interface ArrayViewInterface extends \ArrayAccess, \IteratorAggregate, \Countabl
      * @param callable(T, int): bool $predicate Function that returns a boolean value for each element.
      *
      * @return MaskSelectorInterface Boolean mask for selecting elements that satisfy the predicate.
+     *
+     * @see ArrayViewInterface::match() Full synonim.
      */
     public function is(callable $predicate): MaskSelectorInterface;
+
+    /**
+     * Checks if all elements in the view satisfy a given predicate function.
+     *
+     * @param callable(T, int): bool $predicate Function that returns a boolean value for each element.
+     *
+     * @return MaskSelectorInterface Boolean mask for selecting elements that satisfy the predicate.
+     *
+     * @see ArrayViewInterface::is() Full synonim.
+     */
+    public function match(callable $predicate): MaskSelectorInterface;
 
     /**
      * Compares the elements of the current ArrayView instance with another array or ArrayView
