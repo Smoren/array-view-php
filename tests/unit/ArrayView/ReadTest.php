@@ -84,7 +84,7 @@ class ReadTest extends \Codeception\Test\Unit
      */
     public function testMatchWith(
         array $source,
-        array $another,
+        $another,
         callable $comparator,
         array $expectedMask,
         array $expectedArray
@@ -500,6 +500,13 @@ class ReadTest extends \Codeception\Test\Unit
                 [1, 22, 3, 4, 5, 6, 7, 8, 99, 10],
                 fn (int $lhs, int $rhs) => $lhs >= $rhs,
                 [true, false, true, true, true, true, true, true, false, true],
+                [1, 3, 4, 5, 6, 7, 8, 10],
+            ],
+            [
+                [1, 2, 3],
+                1,
+                fn (int $lhs, int $rhs) => $lhs > $rhs,
+                [false, true, true],
                 [1, 3, 4, 5, 6, 7, 8, 10],
             ],
         ];
