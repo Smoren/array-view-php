@@ -86,7 +86,7 @@ trait ArrayViewAccessTrait
      *
      * $view['::2']; // [1, 3, 5]
      * $view[[0, 2, 4]]; // [1, 3, 5]
-     * $view[[true, true, false, false, true]]; // [1, 3, 5]
+     * $view[[true, true, false, false, true]]; // [1, 2, 5]
      * ```
      *
      * @param numeric|S $offset The offset to get the value at.
