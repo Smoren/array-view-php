@@ -181,6 +181,63 @@ class ArrayView implements ArrayViewInterface
     }
 
     /**
+     * Returns a subview of this view based on a selector or string slice.
+     *
+     * ##### Example (using selector objects)
+     * ```php
+     * $source = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+     *
+     * $subview = ArrayView::toView($source)
+     *     ->subview(new SliceSelector('::2'))                          // [1, 3, 5, 7, 9]
+     *     ->subview(new MaskSelector([true, false, true, true, true])) // [1, 5, 7, 9]
+     *     ->subview(new IndexListSelector([0, 1, 2]))                  // [1, 5, 7]
+     *     ->subview(new SliceSelector('1:'));                          // [5, 7]
+     *
+     * $subview[':'] = [55, 77];
+     * print_r($source); // [1, 2, 3, 4, 55, 6, 77, 8, 9, 10]
+     * ```
+     *
+     * ##### Example (using short objects)
+     * ```php
+     * $source = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+     *
+     * $subview = ArrayView::toView($source)
+     *     ->subview('::2')                           // [1, 3, 5, 7, 9]
+     *     ->subview([true, false, true, true, true]) // [1, 5, 7, 9]
+     *     ->subview([0, 1, 2])                       // [1, 5, 7]
+     *     ->subview('1:');                           // [5, 7]
+     *
+     * $subview[':'] = [55, 77];
+     * print_r($source); // [1, 2, 3, 4, 55, 6, 77, 8, 9, 10]
+     * ```
+     *
+     * ##### Readonly example
+     * ```php
+     * $source = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+     * $subview = ArrayView::toView($source)->subview('::2');
+     *
+     * $subview[':']; // [1, 3, 5, 7, 9]
+     * $subview[':'] = [11, 33, 55, 77, 99]; // throws ReadonlyError
+     * $subview[0] = [11]; // throws ReadonlyError
+     * ```
+     *
+     * @template S of string|array<int|bool>|ArrayViewInterface<int|bool>|ArraySelectorInterface Selector type.
+     *
+     * @param S $selector The selector or string to filter the subview.
+     * @param bool|null $readonly Flag indicating if the subview should be read-only.
+     *
+     * @return ArrayViewInterface<T> A new view representing the subview of this view.
+     *
+     * @throws IndexError if the selector is IndexListSelector and some indexes are out of range.
+     * @throws SizeError if the selector is MaskSelector and size of the mask not equals to size of the view.
+     * @throws KeyError if the selector is not valid (e.g. non-sequential array).
+     */
+    public function subview($selector, bool $readonly = null): ArrayViewInterface
+    {
+        return $this->toSelector($selector)->select($this, $readonly);
+    }
+
+    /**
      * Filters the elements in the view based on a predicate function.
      *
      * ##### Example
@@ -270,7 +327,7 @@ class ArrayView implements ArrayViewInterface
      *
      * @template U The type of the elements in the array for comparison with.
      *
-     * @param array<U>|ArrayViewInterface<U> $data The array or ArrayView to compare to.
+     * @param array<U>|ArrayViewInterface<U>|U $data The array or ArrayView to compare to.
      * @param callable(T, U, int): bool $comparator Function that determines the comparison logic between the elements.
      *
      * @return MaskSelectorInterface A MaskSelector instance representing the results of the element comparisons.
@@ -282,65 +339,86 @@ class ArrayView implements ArrayViewInterface
      */
     public function matchWith($data, callable $comparator): MaskSelectorInterface
     {
+        $this->checkSequential($data); // TODO test
+
+        if ($data instanceof ArrayViewInterface) {
+            $data = $data->toArray();
+        } elseif (!\is_array($data)) {
+            $data = \array_fill(0, \count($this), $data);
+        }
+
+        [$dataSize, $thisSize] = [\count($data), \count($this)];
+        if ($dataSize !== $thisSize) {
+            throw new SizeError("Length of values array not equal to view length ({$dataSize} != {$thisSize}).");
+        }
+
         $data = $data instanceof ArrayViewInterface ? $data->toArray() : $data;
         return new MaskSelector(array_map($comparator, $this->toArray(), $data, array_keys($data)));
     }
 
     /**
-     * Returns a subview of this view based on a selector or string slice.
+     * Transforms each element of the array using the given callback function.
      *
-     * ##### Example (using selector objects)
-     * ```php
-     * $source = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+     * The callback function receives two parameters: the current element of the array and its index.
      *
-     * $subview = ArrayView::toView($source)
-     *     ->subview(new SliceSelector('::2'))                          // [1, 3, 5, 7, 9]
-     *     ->subview(new MaskSelector([true, false, true, true, true])) // [1, 5, 7, 9]
-     *     ->subview(new IndexListSelector([0, 1, 2]))                  // [1, 5, 7]
-     *     ->subview(new SliceSelector('1:'));                          // [5, 7]
+     * @param callable(T, int): T $mapper Function to transform each element.
      *
-     * $subview[':'] = [55, 77];
-     * print_r($source); // [1, 2, 3, 4, 55, 6, 77, 8, 9, 10]
-     * ```
-     *
-     * ##### Example (using short objects)
-     * ```php
-     * $source = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-     *
-     * $subview = ArrayView::toView($source)
-     *     ->subview('::2')                           // [1, 3, 5, 7, 9]
-     *     ->subview([true, false, true, true, true]) // [1, 5, 7, 9]
-     *     ->subview([0, 1, 2])                       // [1, 5, 7]
-     *     ->subview('1:');                           // [5, 7]
-     *
-     * $subview[':'] = [55, 77];
-     * print_r($source); // [1, 2, 3, 4, 55, 6, 77, 8, 9, 10]
-     * ```
-     *
-     * ##### Readonly example
-     * ```php
-     * $source = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-     * $subview = ArrayView::toView($source)->subview('::2');
-     *
-     * $subview[':']; // [1, 3, 5, 7, 9]
-     * $subview[':'] = [11, 33, 55, 77, 99]; // throws ReadonlyError
-     * $subview[0] = [11]; // throws ReadonlyError
-     * ```
-     *
-     * @template S of string|array<int|bool>|ArrayViewInterface<int|bool>|ArraySelectorInterface Selector type.
-     *
-     * @param S $selector The selector or string to filter the subview.
-     * @param bool|null $readonly Flag indicating if the subview should be read-only.
-     *
-     * @return ArrayViewInterface<T> A new view representing the subview of this view.
-     *
-     * @throws IndexError if the selector is IndexListSelector and some indexes are out of range.
-     * @throws SizeError if the selector is MaskSelector and size of the mask not equals to size of the view.
-     * @throws KeyError if the selector is not valid (e.g. non-sequential array).
+     * @return array<T> New array with transformed elements of this view.
      */
-    public function subview($selector, bool $readonly = null): ArrayViewInterface
+    public function map(callable $mapper): array
     {
-        return $this->toSelector($selector)->select($this, $readonly);
+        $result = [];
+        $size = \count($this);
+        for ($i = 0; $i < $size; $i++) {
+            /** @var T $item */
+            $item = $this[$i];
+            $result[$i] = $mapper($item, $i);
+        }
+        return $result;
+    }
+
+    /**
+     * Transforms each pair of elements from the current array view and the provided data array using the given
+     * callback function.
+     *
+     * The callback function receives three parameters: the current element of the current array view,
+     * the corresponding element of the data array, and the index.
+     *
+     * @template U The type rhs of a binary operation.
+     *
+     * @param array<U>|ArrayViewInterface<U>|U $data The rhs values for a binary operation.
+     * @param callable(T, U, int): T $mapper Function to transform each pair of elements.
+     *
+     * @return array<mixed> New array with transformed elements of this view.
+     */
+    public function mapWith($data, callable $mapper): array
+    {
+        $this->checkSequential($data);
+
+        if ($data instanceof ArrayViewInterface) {
+            $data = $data->toArray();
+        } elseif (!\is_array($data)) {
+            $data = \array_fill(0, \count($this), $data);
+        }
+
+        [$dataSize, $thisSize] = [\count($data), \count($this)];
+        if ($dataSize !== $thisSize) {
+            throw new SizeError("Length of values array not equal to view length ({$dataSize} != {$thisSize}).");
+        }
+
+        $dataView = ArrayView::toView($data);
+        $result = [];
+
+        $size = \count($this);
+        for ($i = 0; $i < $size; $i++) {
+            /** @var T $lhs */
+            $lhs = $this[$i];
+            /** @var U $rhs */
+            $rhs = $dataView[$i];
+            $result[$i] = $mapper($lhs, $rhs, $i);
+        }
+
+        return $result;
     }
 
     /**
@@ -566,7 +644,11 @@ class ArrayView implements ArrayViewInterface
      */
     protected function checkSequential($source): void
     {
-        if (is_array($source) && !Util::isArraySequential($source)) {
+        if ($source instanceof ArrayViewInterface) {
+            return;
+        }
+
+        if (\is_array($source) && !Util::isArraySequential($source)) {
             throw new ValueError('Cannot create view for non-sequential array.');
         }
     }
