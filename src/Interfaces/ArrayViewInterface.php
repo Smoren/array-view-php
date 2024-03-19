@@ -150,6 +150,9 @@ interface ArrayViewInterface extends \ArrayAccess, \IteratorAggregate, \Countabl
      * @param callable(T, U, int): T $mapper Function to transform each pair of elements.
      *
      * @return array<mixed> New array with transformed elements of this view.
+     *
+     * @throws ValueError if the $data is not sequential array.
+     * @throws SizeError if size of $data not equals to size of the view.
      */
     public function mapWith($data, callable $mapper): array;
 
