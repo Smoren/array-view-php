@@ -100,6 +100,39 @@ class ReadTest extends \Codeception\Test\Unit
         $this->assertSame($expectedArray, $view->subview($boolMask)->toArray());
     }
 
+    /**
+     * @dataProvider dataProviderForMap
+     */
+    public function testMap(
+        array $source,
+        callable $mapper,
+        array $expected
+    ) {
+        // Given
+        $view = ArrayView::toView($source);
+
+        // When
+        $actual = $view->map($mapper);
+
+        // Then
+        $this->assertSame($expected, $actual);
+    }
+
+    /**
+     * @dataProvider dataProviderForMapWith
+     */
+    public function testMapWith(array $source, $another, callable $mapper, array $expected)
+    {
+        // Given
+        $view = ArrayView::toView($source);
+
+        // When
+        $actual = $view->mapWith($another, $mapper);
+
+        // Then
+        $this->assertSame($expected, $actual);
+    }
+
     public function dataProviderForArrayRead(): array
     {
         return [
@@ -468,6 +501,96 @@ class ReadTest extends \Codeception\Test\Unit
                 fn (int $lhs, int $rhs) => $lhs >= $rhs,
                 [true, false, true, true, true, true, true, true, false, true],
                 [1, 3, 4, 5, 6, 7, 8, 10],
+            ],
+        ];
+    }
+
+    public function dataProviderForMap(): array
+    {
+        return [
+            [
+                [],
+                fn (int $x) => $x,
+                [],
+            ],
+            [
+                [1],
+                fn (int $x) => $x,
+                [1],
+            ],
+            [
+                [1],
+                fn (int $x) => $x * 2,
+                [2],
+            ],
+            [
+                [1, 2, 3],
+                fn (int $x) => $x + 1,
+                [2, 3, 4],
+            ],
+            [
+                [1, 2, 3],
+                fn (int $x) => [$x + 1],
+                [[2], [3], [4]],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+                fn (int $_, int $i) => $i % 2 === 0,
+                [true, false, true, false, true, false, true, false, true, false],
+            ],
+        ];
+    }
+
+    public function dataProviderForMapWith(): array
+    {
+        return [
+            [
+                [],
+                [],
+                fn (int $lhs, int $rhs) => $rhs + $lhs,
+                [],
+            ],
+            [
+                [1],
+                [2],
+                fn (int $lhs, int $rhs) => $rhs + $lhs,
+                [3],
+            ],
+            [
+                [1],
+                [2],
+                fn (int $lhs, int $rhs) => $rhs > $lhs,
+                [true],
+            ],
+            [
+                [1, 2, 3],
+                [10, 20, 30],
+                fn (int $lhs, int $rhs) => $rhs + $lhs,
+                [11, 22, 33],
+            ],
+            [
+                [1, 2, 3],
+                [10, 20, 30],
+                fn (int $lhs, int $rhs) => [$lhs, $rhs],
+                [[1, 10], [2, 20], [3, 30]],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+                [1, 22, 3, 4, 5, 6, 7, 8, 99, 10],
+                fn (int $lhs, int $rhs) => $rhs > $lhs,
+                [false, true, false, false, false, false, false, false, true, false],
+            ],
+            [
+                [1, 2, 3],
+                10,
+                fn (int $lhs, int $rhs) => $rhs + $lhs,
+                [11, 12, 13],
+            ],
+            [
+                [1, 2, 3],
+                ArrayView::toUnlinkedView([10, 20, 30]),
+                fn (int $lhs, int $rhs) => [$lhs, $rhs],
+                [[1, 10], [2, 20], [3, 30]],
             ],
         ];
     }

@@ -66,6 +66,20 @@ interface ArrayViewInterface extends \ArrayAccess, \IteratorAggregate, \Countabl
     public function toArray(): array;
 
     /**
+     * Returns a subview of this view based on a selector or string slice.
+     *
+     * @param string|array<int|bool>|ArrayViewInterface<int|bool>|ArraySelectorInterface $selector The selector or
+     * string to filter the subview.
+     * @param bool|null $readonly Flag indicating if the subview should be read-only.
+     *
+     * @return ArrayViewInterface<T> A new view representing the subview of this view.
+     *
+     * @throws IndexError if the selector is IndexListSelector and some indexes are out of range.
+     * @throws SizeError if the selector is MaskSelector and size of the mask not equals to size of the view.
+     */
+    public function subview($selector, bool $readonly = null): ArrayViewInterface;
+
+    /**
      * Filters the elements in the view based on a predicate function.
      *
      * @param callable(T, int): bool $predicate Function that returns a boolean value for each element.
@@ -102,7 +116,7 @@ interface ArrayViewInterface extends \ArrayAccess, \IteratorAggregate, \Countabl
      *
      * @template U The type of the elements in the array for comparison with.
      *
-     * @param array<U>|ArrayViewInterface<U> $data The array or ArrayView to compare to.
+     * @param array<U>|ArrayViewInterface<U>|U $data The array or ArrayView to compare to.
      * @param callable(T, U, int): bool $comparator Function that determines the comparison logic between the elements.
      *
      * @return MaskSelectorInterface A MaskSelector instance representing the results of the element comparisons.
@@ -113,18 +127,31 @@ interface ArrayViewInterface extends \ArrayAccess, \IteratorAggregate, \Countabl
     public function matchWith($data, callable $comparator): MaskSelectorInterface;
 
     /**
-     * Returns a subview of this view based on a selector or string slice.
+     * Transforms each element of the array using the given callback function.
      *
-     * @param string|array<int|bool>|ArrayViewInterface<int|bool>|ArraySelectorInterface $selector The selector or
-     * string to filter the subview.
-     * @param bool|null $readonly Flag indicating if the subview should be read-only.
+     * The callback function receives two parameters: the current element of the array and its index.
      *
-     * @return ArrayViewInterface<T> A new view representing the subview of this view.
+     * @param callable(T, int): T $mapper Function to transform each element.
      *
-     * @throws IndexError if the selector is IndexListSelector and some indexes are out of range.
-     * @throws SizeError if the selector is MaskSelector and size of the mask not equals to size of the view.
+     * @return array<T> New array with transformed elements of this view.
      */
-    public function subview($selector, bool $readonly = null): ArrayViewInterface;
+    public function map(callable $mapper): array;
+
+    /**
+     * Transforms each pair of elements from the current array view and the provided data array using the given
+     * callback function.
+     *
+     * The callback function receives three parameters: the current element of the current array view,
+     * the corresponding element of the data array, and the index.
+     *
+     * @template U The type rhs of a binary operation.
+     *
+     * @param array<U>|ArrayViewInterface<U>|U $data The rhs values for a binary operation.
+     * @param callable(T, U, int): T $mapper Function to transform each pair of elements.
+     *
+     * @return array<mixed> New array with transformed elements of this view.
+     */
+    public function mapWith($data, callable $mapper): array;
 
     /**
      * Applies a transformation function to each element in the view.
