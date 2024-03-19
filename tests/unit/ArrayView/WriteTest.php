@@ -149,7 +149,7 @@ class WriteTest extends \Codeception\Test\Unit
     /**
      * @dataProvider dataProviderForApplyWith
      */
-    public function testApplyWith(array $source, callable $viewGetter, callable $mapper, array $arg, array $expected)
+    public function testApplyWith(array $source, callable $viewGetter, callable $mapper, $arg, array $expected)
     {
         // Given
         $view = $viewGetter($source);
@@ -518,6 +518,13 @@ class WriteTest extends \Codeception\Test\Unit
                 fn (int $lhs, int $rhs) => $lhs * $rhs,
                 [1, 2, 3, 4, 5],
                 [1, 2, 6, 4, 15, 6, 28, 8, 45, 10],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+                fn (array &$source) => ArrayView::toView($source)->subview('::2'),
+                fn (int $lhs, int $rhs) => $lhs * $rhs,
+                10,
+                [10, 2, 30, 4, 50, 6, 70, 8, 90, 10],
             ],
         ];
     }

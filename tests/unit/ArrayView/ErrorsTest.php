@@ -157,22 +157,6 @@ class ErrorsTest extends \Codeception\Test\Unit
     }
 
     /**
-     * @dataProvider dataProviderForApplyWithSizeError
-     */
-    public function testApplyWithSizeError(array $source, callable $viewGetter, callable $mapper, array $toApplyWith)
-    {
-        $view = ArrayView::toView($source);
-
-        $sourceSize = \count($source);
-        $argSize = \count($toApplyWith);
-
-        $this->expectException(SizeError::class);
-        $this->expectExceptionMessage("Length of values array not equal to view length ({$argSize} != {$sourceSize}).");
-
-        $view->applyWith($toApplyWith, $mapper);
-    }
-
-    /**
      * @dataProvider dataProviderForWriteSizeError
      */
     public function testWriteSizeError(array $source, callable $viewGetter, array $toWrite)
@@ -237,6 +221,102 @@ class ErrorsTest extends \Codeception\Test\Unit
         }
     }
 
+    /**
+     * @dataProvider dataProviderForSequentialError
+     */
+    public function testMapWithSequentialError(array $source, array $arg)
+    {
+        $view = ArrayView::toView($source);
+
+        try {
+            $view->mapWith($arg, fn ($lhs, $rhs) => $lhs + $rhs);
+        } catch (ValueError $e) {
+            $this->assertSame('Argument is not sequential.', $e->getMessage());
+        }
+    }
+
+    /**
+     * @dataProvider dataProviderForSizeError
+     */
+    public function testMapWithSizeError(array $source, array $arg)
+    {
+        $view = ArrayView::toView($source);
+
+        try {
+            $view->mapWith($arg, fn ($lhs, $rhs) => $lhs + $rhs);
+        } catch (SizeError $e) {
+            [$lhsSize, $rhsSize] = array_map('count', [$arg, $source]);
+            $this->assertSame(
+                "Length of values array not equal to view length ({$lhsSize} != {$rhsSize}).",
+                $e->getMessage()
+            );
+        }
+    }
+
+    /**
+     * @dataProvider dataProviderForSequentialError
+     */
+    public function testMatchWithSequentialError(array $source, array $arg)
+    {
+        $view = ArrayView::toView($source);
+
+        try {
+            $view->matchWith($arg, fn ($lhs, $rhs) => $lhs && $rhs);
+        } catch (ValueError $e) {
+            $this->assertSame('Argument is not sequential.', $e->getMessage());
+        }
+    }
+
+    /**
+     * @dataProvider dataProviderForSizeError
+     */
+    public function testMatchWithSizeError(array $source, array $arg)
+    {
+        $view = ArrayView::toView($source);
+
+        try {
+            $view->matchWith($arg, fn ($lhs, $rhs) => $lhs && $rhs);
+        } catch (SizeError $e) {
+            [$lhsSize, $rhsSize] = array_map('count', [$arg, $source]);
+            $this->assertSame(
+                "Length of values array not equal to view length ({$lhsSize} != {$rhsSize}).",
+                $e->getMessage()
+            );
+        }
+    }
+
+    /**
+     * @dataProvider dataProviderForSequentialError
+     */
+    public function testApplyWithSequentialError(array $source, array $arg)
+    {
+        $view = ArrayView::toView($source);
+
+        try {
+            $view->applyWith($arg, fn ($lhs, $rhs) => $lhs + $rhs);
+        } catch (ValueError $e) {
+            $this->assertSame('Argument is not sequential.', $e->getMessage());
+        }
+    }
+
+    /**
+     * @dataProvider dataProviderForSizeError
+     */
+    public function testApplyWithSizeError(array $source, array $arg)
+    {
+        $view = ArrayView::toView($source);
+
+        try {
+            $view->applyWith($arg, fn ($lhs, $rhs) => $lhs && $rhs);
+        } catch (SizeError $e) {
+            [$lhsSize, $rhsSize] = array_map('count', [$arg, $source]);
+            $this->assertSame(
+                "Length of values array not equal to view length ({$lhsSize} != {$rhsSize}).",
+                $e->getMessage()
+            );
+        }
+    }
+
     public function dataProviderForOutOfRangeIndexes(): array
     {
         return [
@@ -298,42 +378,6 @@ class ErrorsTest extends \Codeception\Test\Unit
             [[1, 2, 3], '0::0'],
             [[1, 2, 3], ':-1:0'],
             [[1, 2, 3], '1:-1:0'],
-        ];
-    }
-
-    public function dataProviderForApplyWithSizeError(): array
-    {
-        return [
-            [
-                [],
-                fn (array &$source) => ArrayView::toView($source),
-                fn (int $item) => $item,
-                [1],
-            ],
-            [
-                [1],
-                fn (array &$source) => ArrayView::toView($source),
-                fn (int $item) => $item,
-                [],
-            ],
-            [
-                [1],
-                fn (array &$source) => ArrayView::toView($source),
-                fn (int $item) => $item,
-                [1, 2],
-            ],
-            [
-                [1, 2, 3],
-                fn (array &$source) => ArrayView::toView($source),
-                fn (int $item) => $item,
-                [1, 2],
-            ],
-            [
-                [1, 2, 3],
-                fn (array &$source) => ArrayView::toView($source),
-                fn (int $item) => $item,
-                [1, 2, 3, 4, 5],
-            ],
         ];
     }
 
@@ -463,6 +507,29 @@ class ErrorsTest extends \Codeception\Test\Unit
                 $array['test'] = 111;
                 return $array;
             }],
+        ];
+    }
+
+    public function dataProviderForSequentialError(): array
+    {
+        return [
+            [[], ['test' => 123]],
+            [[], [1 => 1]],
+            [[], [0, 2 => 1]],
+            [[1, 2, 3], ['test' => 123]],
+            [[1, 2, 3], [1 => 1]],
+            [[1, 2, 3], [0, 2 => 1]],
+        ];
+    }
+
+    public function dataProviderForSizeError(): array
+    {
+        return [
+            [[], [1]],
+            [[], [1, 2, 3]],
+            [[1, 2, 3], []],
+            [[1, 2, 3], [1, 2]],
+            [[1, 2, 3], [1, 2, 3, 4]],
         ];
     }
 }
