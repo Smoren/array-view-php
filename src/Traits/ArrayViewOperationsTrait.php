@@ -188,7 +188,7 @@ trait ArrayViewOperationsTrait
      *
      * $data = [9, 27, 45, 63, 81];
      *
-     * $subview->mapWith($data, fn ($lhs, $rhs) => $lhs * $rhs); // [10, 30, 50, 70, 90]
+     * $subview->mapWith($data, fn ($lhs, $rhs) => $lhs + $rhs); // [10, 30, 50, 70, 90]
      * ```
      *
      * @template U The type rhs of a binary operation.
@@ -257,7 +257,7 @@ trait ArrayViewOperationsTrait
      *
      * $data = [9, 27, 45, 63, 81];
      *
-     * $subview->applyWith($data, fn ($lhs, $rhs) => $lhs * $rhs);
+     * $subview->applyWith($data, fn ($lhs, $rhs) => $lhs + $rhs);
      * $subview->toArray(); // [10, 30, 50, 70, 90]
      *
      * $source; // [10, 2, 30, 4, 50, 6, 70, 8, 90, 10]
