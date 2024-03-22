@@ -26,15 +26,20 @@ composer require smoren/array-view
 ### Indexing
 
 Index into an array forward or backwards using positive or negative indexes.
+
+| Data             |   1  |   2  |   3  |   4  |   5  |   6  |   7  |
+| ---------------- | ---- | ---- | ---- | ---- | ---- | ---- | ---- |
+| *Positive Index* |  *0* |  *1* |  *2* | *3*  |  *4* |  *5* |  *6* |
+| *Negative Index* | *-7* | *-6* | *-5* | *-4* | *-3* | *-2* | *-1* |
 ```php
 use Smoren\ArrayView\Views\ArrayView;
 
-$view = ArrayView::toView([1, 2, 3, 4, 5, 6, 7, 8, 9]);
+$view = ArrayView::toView([1, 2, 3, 4, 5, 6, 7]);
 
 $view[0];  // 1
 $view[1];  // 2
-$view[-1]; // 9
-$view[-2]; // 8
+$view[-1]; // 7
+$view[-2]; // 6
 ```
 
 ### Slices
