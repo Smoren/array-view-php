@@ -5,6 +5,8 @@
 ![Build and test](https://github.com/Smoren/array-view-php/actions/workflows/test.yml/badge.svg)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
+![Array View Logo](docs/images/logo.png)
+
 **Array View** is a PHP library that provides powerful abstractions and utilities for working with lists of data.
 Create views of arrays, slice and index using Python-like notation, transform and select your data using chained and
 fluent operations.
