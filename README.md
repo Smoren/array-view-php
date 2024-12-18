@@ -18,7 +18,6 @@ fluent operations.
 - Filtering, mapping, matching and masking
 - Chaining operations via pipes and fluent interfaces
 
-
 ## How to install to your project
 ```bash
 composer require smoren/array-view
